@@ -2,6 +2,7 @@ package com.example.alex.yandextranslator;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +12,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textView;
     private EditText editText;
     private Button button;
+
+    private final String LOG_TAG = this.getClass().getSimpleName();
 
 
     @Override
@@ -29,9 +32,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        Log.d(LOG_TAG, "Start onClick");
         switch (v.getId()) {
             case R.id.button:
-                String text_to_yandex = getEditText(editText);
+                String textToYandex = getEditText(editText);
+                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
+
                 break;
         }
     }
@@ -47,6 +53,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (text.length() == 0) text = "";
         return text;
     }
-
 
 }
