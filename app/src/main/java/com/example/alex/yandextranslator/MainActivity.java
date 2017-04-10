@@ -8,10 +8,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.alex.yandextranslator.model.TranslatorResponse;
+import com.example.alex.yandextranslator.rest.ApiClient;
+import com.example.alex.yandextranslator.rest.ApiTranslator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,19 +30,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editText;
     private Button button;
 
+    private ApiTranslator apiTranslator;
+
+    private Map<String, String> mapJson;
+
     private final String URL = "https://translate.yandex.net";
     private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
-
-
-    private Gson gson = new GsonBuilder().create();
-
-    private Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build();
-
-    private YandexTranslatorApi yandexTranslatorApi = retrofit.create(YandexTranslatorApi.class);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +44,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initView();
 
+        initApiTranslator();
+
         buttonBehavior();
+
     }
 
     private void buttonBehavior() {
         button.setOnClickListener(this);
+    }
+
+    private void initApiTranslator(){
+        apiTranslator = ApiClient.getClient().create(ApiTranslator.class);
     }
 
     @Override
@@ -62,38 +64,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.button:
                 String textToYandex = getEditText(editText);
-                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
+//                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
 
-                Map<String, String> mapJson = new HashMap<>();
-                mapJson.put("key", KEY);
-                mapJson.put("text", textToYandex);
-                mapJson.put("lang", "en-ru");
+                createMapJson(textToYandex);
 
-                Call<Object> call = yandexTranslatorApi.translate(mapJson);
+                createRequest();
 
-                call.enqueue(new Callback<Object>() {
-                    @Override
-                    public void onResponse(Call<Object> call, Response<Object> response) {
-                        try {
-                            Map<String, String> map = gson.fromJson(response.body().toString(), Map.class);
-
-                            for (Map.Entry entry : map.entrySet()) {
-                                if (entry.getKey().equals("text")) {
-                                    textView.setText(entry.getValue().toString());
-                                    Log.d(LOG_TAG, "textFromYandex = " + entry.getValue().toString());
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<Object> call, Throwable t) {
-
-                    }
-                });
             break;
         }
+    }
+
+    private void createRequest() {
+        Call<TranslatorResponse> call = apiTranslator.translate(mapJson);
+
+        call.enqueue(new Callback<TranslatorResponse>() {
+            @Override
+            public void onResponse(Call<TranslatorResponse> call, Response<TranslatorResponse> response) {
+                try {
+                    textView.setText(response.body().getText().toString());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(Call<TranslatorResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+    private void createMapJson(String textToYandex) {
+        if (mapJson == null) {
+            mapJson = new HashMap<>();
+        } else {
+            mapJson.clear();
+        }
+
+        mapJson.put("key", KEY);
+        mapJson.put("text", textToYandex);
+        mapJson.put("lang", "en-ru");
     }
 
     private void initView() {

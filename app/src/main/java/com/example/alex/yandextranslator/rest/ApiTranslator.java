@@ -1,6 +1,6 @@
 package com.example.alex.yandextranslator.rest;
 
-import com.example.alex.yandextranslator.model.TranslatorModel;
+import com.example.alex.yandextranslator.model.TranslatorResponse;
 
 import java.util.Map;
 
@@ -13,8 +13,8 @@ import retrofit2.http.POST;
  * Created by alex on 08.04.17.
  */
 
-public interface YandexTranslatorApi {
+public interface ApiTranslator {
     @FormUrlEncoded
     @POST("/api/v1.5/tr.json/translate")
-    Call<TranslatorModel> translate(@FieldMap Map<String, String> map);
+    Call<TranslatorResponse> translate(@FieldMap Map<String, String> map);
 }

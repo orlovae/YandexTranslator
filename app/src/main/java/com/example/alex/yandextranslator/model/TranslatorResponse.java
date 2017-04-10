@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by alex on 10.04.17.
  */
 
-public class TranslatorModel {
+public class TranslatorResponse {
 
     @SerializedName("code")
     @Expose
