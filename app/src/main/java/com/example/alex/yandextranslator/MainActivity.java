@@ -7,9 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.alex.yandextranslator.model.LanguageDetectionResponse;
 import com.example.alex.yandextranslator.model.TranslatorResponse;
 import com.example.alex.yandextranslator.rest.ApiClient;
+import com.example.alex.yandextranslator.rest.ApiLanguageDetection;
 import com.example.alex.yandextranslator.rest.ApiTranslator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button button;
 
     private ApiTranslator apiTranslator;
+    private ApiLanguageDetection apiLanguageDetection;
 
     private Map<String, String> mapJson;
 
@@ -44,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initView();
 
+        initApiLanguageDetection();
+
         initApiTranslator();
 
         buttonBehavior();
@@ -52,6 +58,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void buttonBehavior() {
         button.setOnClickListener(this);
+    }
+
+    private void initApiLanguageDetection(){
+        apiLanguageDetection = ApiClient.getClient().create(ApiLanguageDetection.class);
     }
 
     private void initApiTranslator(){
@@ -66,15 +76,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String textToYandex = getEditText(editText);
 //                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
 
-                createMapJson(textToYandex);
+                createMapJson(textToYandex, "languageDetection");
 
-                createRequest();
+                createRequestLanguageDetection();
+
+                createMapJson(textToYandex, "translator");
+
+                createRequestTranslator();
 
             break;
         }
     }
 
-    private void createRequest() {
+    private void createRequestLanguageDetection(){
+        Call<LanguageDetectionResponse> call = apiLanguageDetection.languageDetection(mapJson);
+
+        call.enqueue(new Callback<LanguageDetectionResponse>() {
+            @Override
+            public void onResponse(Call<LanguageDetectionResponse> call, Response<LanguageDetectionResponse> response) {
+                try {
+                    String lang = response.body().getLang();
+                    Toast.makeText(MainActivity.this, "Language is " + lang, Toast.LENGTH_SHORT).show();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LanguageDetectionResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void createRequestTranslator() {
         Call<TranslatorResponse> call = apiTranslator.translate(mapJson);
 
         call.enqueue(new Callback<TranslatorResponse>() {
@@ -89,13 +125,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             @Override
             public void onFailure(Call<TranslatorResponse> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }
 
 
-    private void createMapJson(String textToYandex) {
+    private void createMapJson(String textToYandex, String key) {
         if (mapJson == null) {
             mapJson = new HashMap<>();
         } else {
@@ -104,7 +140,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mapJson.put("key", KEY);
         mapJson.put("text", textToYandex);
-        mapJson.put("lang", "en-ru");
+        if (key.equals("translator")){
+            mapJson.put("lang", "en-ru");
+        }
     }
 
     private void initView() {
