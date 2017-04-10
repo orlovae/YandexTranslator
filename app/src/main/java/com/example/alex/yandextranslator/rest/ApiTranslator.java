@@ -1,4 +1,6 @@
-package com.example.alex.yandextranslator;
+package com.example.alex.yandextranslator.rest;
+
+import com.example.alex.yandextranslator.model.TranslatorModel;
 
 import java.util.Map;
 
@@ -14,5 +16,5 @@ import retrofit2.http.POST;
 public interface YandexTranslatorApi {
     @FormUrlEncoded
     @POST("/api/v1.5/tr.json/translate")
-    Call<Object> translate(@FieldMap Map<String, String> map);
+    Call<TranslatorModel> translate(@FieldMap Map<String, String> map);
 }
