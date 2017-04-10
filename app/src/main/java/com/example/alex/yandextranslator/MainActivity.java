@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Map<String, String> mapJson;
 
-    private final String URL = "https://translate.yandex.net";
+    private final String URL = "https://translate.yandex.net/";
     private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
 
     @Override
@@ -95,17 +95,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(Call<LanguageDetectionResponse> call, Response<LanguageDetectionResponse> response) {
                 try {
-                    String lang = response.body().getLang();
-                    Toast.makeText(MainActivity.this, "Language is " + lang, Toast.LENGTH_SHORT).show();
+                    if (response.isSuccessful()){
+                        String lang = response.body().getLang();
+                        Toast.makeText(MainActivity.this, "Language is " + lang, Toast.LENGTH_SHORT).show();
+                    } else {
+                        error();
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    error();
                 }
             }
 
             @Override
             public void onFailure(Call<LanguageDetectionResponse> call, Throwable t) {
-
+                error();
             }
         });
     }
@@ -117,15 +122,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(Call<TranslatorResponse> call, Response<TranslatorResponse> response) {
                 try {
-                    textView.setText(response.body().getText().toString());
-
+                    if (response.isSuccessful()){
+                        textView.setText(response.body().getText().toString());
+                    } else {
+                        textView.setText(R.string.error_invalid_responce);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    error();
                 }
             }
             @Override
             public void onFailure(Call<TranslatorResponse> call, Throwable t) {
                 t.printStackTrace();
+                error();
             }
         });
     }
@@ -155,6 +165,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String text = editText.getText().toString();
         if (text.length() == 0) text = "";
         return text;
+    }
+
+    private void error(){
+        Toast.makeText(MainActivity.this, R.string.error_invalid_responce, Toast.LENGTH_LONG).show();
     }
 
 }

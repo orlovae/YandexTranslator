@@ -15,6 +15,6 @@ import retrofit2.http.POST;
 
 public interface ApiLanguageDetection {
     @FormUrlEncoded
-    @POST("/api/v1.5/tr.json/detect")
+    @POST("api/v1.5/tr.json/detect")
     Call<LanguageDetectionResponse> languageDetection(@FieldMap Map<String, String> map);
 }

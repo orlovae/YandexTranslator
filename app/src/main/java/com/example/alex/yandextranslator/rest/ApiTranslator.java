@@ -15,6 +15,6 @@ import retrofit2.http.POST;
 
 public interface ApiTranslator {
     @FormUrlEncoded
-    @POST("/api/v1.5/tr.json/translate")
+    @POST("api/v1.5/tr.json/translate")
     Call<TranslatorResponse> translate(@FieldMap Map<String, String> map);
 }
