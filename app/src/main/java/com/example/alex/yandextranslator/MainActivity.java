@@ -28,15 +28,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editText;
     private Button button;
 
-    private final String URL = "https://translate.yandex.ru";
+    private final String URL = "https://translate.yandex.net";
     private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
 
 
     private Gson gson = new GsonBuilder().create();
 
     private Retrofit retrofit = new Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create(gson))
             .baseUrl(URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
 
     private YandexTranslatorApi yandexTranslatorApi = retrofit.create(YandexTranslatorApi.class);
@@ -71,30 +71,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 Call<Object> call = yandexTranslatorApi.translate(mapJson);
 
+                call.enqueue(new Callback<Object>() {
+                    @Override
+                    public void onResponse(Call<Object> call, Response<Object> response) {
+                        try {
+                            Map<String, String> map = gson.fromJson(response.body().toString(), Map.class);
 
-                    call.enqueue(new Callback<Object>() {
-                        @Override
-                        public void onResponse(Call<Object> call, Response<Object> response) {
-                            try {
-                                Map<String, String> map = gson.fromJson(response.body().toString(), Map.class);
-
-                                for (Map.Entry entry : map.entrySet()) {
-                                    if (entry.getKey().equals("text")) {
-                                        textView.setText(entry.getValue().toString());
-                                    }
+                            for (Map.Entry entry : map.entrySet()) {
+                                if (entry.getKey().equals("text")) {
+                                    textView.setText(entry.getValue().toString());
+                                    Log.d(LOG_TAG, "textFromYandex = " + entry.getValue().toString());
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+                    }
+                    @Override
+                    public void onFailure(Call<Object> call, Throwable t) {
 
-
-                        @Override
-                        public void onFailure(Call<Object> call, Throwable t) {
-
-                        }
-                    });
-                break;
+                    }
+                });
+            break;
         }
     }
 
