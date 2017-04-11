@@ -10,8 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alex.yandextranslator.model.LanguageDetectionResponse;
+import com.example.alex.yandextranslator.model.LanguageDictionareResponse;
 import com.example.alex.yandextranslator.model.TranslatorResponse;
 import com.example.alex.yandextranslator.rest.ApiClient;
+import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiLanguageDetection;
 import com.example.alex.yandextranslator.rest.ApiTranslator;
 import com.google.gson.Gson;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ApiTranslator apiTranslator;
     private ApiLanguageDetection apiLanguageDetection;
+    private ApiDictionare apiDictionare;
 
     private Map<String, String> mapJson;
 
@@ -46,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initDictionare();
+
         initView();
 
         initApiLanguageDetection();
@@ -56,8 +61,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void initDictionare() {
+        Log.d(LOG_TAG, "Start initDictionare");
+
+        createMapJson(null, "dictionare");
+        initApiLanguageDictionare();
+        createRequestLanguageDictionare();
+
+    }
+
     private void buttonBehavior() {
         button.setOnClickListener(this);
+    }
+
+    private void initApiLanguageDictionare(){
+        apiDictionare = ApiClient.getClient().create(ApiDictionare.class);
     }
 
     private void initApiLanguageDetection(){
@@ -70,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Log.d(LOG_TAG, "Start onClick");
+//        Log.d(LOG_TAG, "Start onClick");
         switch (v.getId()) {
             case R.id.button:
                 String textToYandex = getEditText(editText);
@@ -140,18 +158,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    private void createRequestLanguageDictionare(){
+        Call<LanguageDictionareResponse> call = apiDictionare.languageDictionare(mapJson);
+        final Gson gson = new GsonBuilder().create();
+
+        call.enqueue(new Callback<LanguageDictionareResponse>() {
+            @Override
+            public void onResponse(Call<LanguageDictionareResponse> call, Response<LanguageDictionareResponse> response) {
+                try {
+                    if (response.isSuccessful()){
+                        response.body().toString();
+//                        Map<String, String> map = gson.fromJson(response.body().toString(), Map.class);
+//
+//                        for (Map.Entry entry : map.entrySet()){
+//                            Log.d(LOG_TAG, entry.getKey() + ":" + entry.getValue());
+//                        }
+                        Log.d(LOG_TAG, "response = " + response.body().toString());
+
+                    } else {
+                        error();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    error();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LanguageDictionareResponse> call, Throwable t) {
+                error();
+            }
+        });
+    }
 
     private void createMapJson(String textToYandex, String key) {
+        Log.d(LOG_TAG, "Start createMapJson");
         if (mapJson == null) {
             mapJson = new HashMap<>();
         } else {
             mapJson.clear();
         }
 
-        mapJson.put("key", KEY);
-        mapJson.put("text", textToYandex);
-        if (key.equals("translator")){
-            mapJson.put("lang", "en-ru");
+        switch (key) {
+            case "dictionare":
+                Log.d(LOG_TAG, "Start createMapJson, case \"dictionare\"");
+                mapJson.put("key", KEY);
+                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
+                break;
+            case "languageDetection":
+                Log.d(LOG_TAG, "Start createMapJson, case \"languageDetection\"");
+                mapJson.put("key", KEY);
+                mapJson.put("text", textToYandex);
+                break;
+            case "translator":
+                Log.d(LOG_TAG, "Start createMapJson, case \"translator\"");
+                mapJson.put("key", KEY);
+                mapJson.put("text", textToYandex);
+                mapJson.put("lang", "en-ru");
+                break;
         }
     }
 
