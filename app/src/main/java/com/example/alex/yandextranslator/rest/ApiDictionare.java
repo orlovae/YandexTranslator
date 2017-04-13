@@ -1,7 +1,6 @@
 package com.example.alex.yandextranslator.rest;
 
-import com.example.alex.yandextranslator.model.LanguageDictionareResponse;
-import com.example.alex.yandextranslator.model.MapLanguage;
+import com.example.alex.yandextranslator.model.Response.LanguageDictionare;
 
 import java.util.Map;
 
@@ -18,5 +17,5 @@ public interface ApiDictionare {
 
     @FormUrlEncoded
     @POST("api/v1.5/tr.json/getLangs")
-    Call<MapLanguage> languageDictionare(@FieldMap Map<String, String> map);
+    Call<LanguageDictionare> languageDictionare(@FieldMap Map<String, String> map);
 }

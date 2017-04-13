@@ -1,6 +1,6 @@
 package com.example.alex.yandextranslator.rest;
 
-import com.example.alex.yandextranslator.model.LanguageDetectionResponse;
+import com.example.alex.yandextranslator.model.Response.LanguageDetection;
 
 import java.util.Map;
 
@@ -16,5 +16,5 @@ import retrofit2.http.POST;
 public interface ApiLanguageDetection {
     @FormUrlEncoded
     @POST("api/v1.5/tr.json/detect")
-    Call<LanguageDetectionResponse> languageDetection(@FieldMap Map<String, String> map);
+    Call<LanguageDetection> languageDetection(@FieldMap Map<String, String> map);
 }

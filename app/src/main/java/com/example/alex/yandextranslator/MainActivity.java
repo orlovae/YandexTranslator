@@ -9,10 +9,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.alex.yandextranslator.model.LanguageDetectionResponse;
-import com.example.alex.yandextranslator.model.MapLanguage;
-import com.example.alex.yandextranslator.model.MapLanguageDesiareliser;
-import com.example.alex.yandextranslator.model.TranslatorResponse;
+import com.example.alex.yandextranslator.model.Response.LanguageDetection;
+import com.example.alex.yandextranslator.model.Response.LanguageDictionare;
+import com.example.alex.yandextranslator.model.Response.LanguageDictionareDesiareliser;
+import com.example.alex.yandextranslator.model.Response.Translator;
 import com.example.alex.yandextranslator.rest.ApiClient;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiLanguageDetection;
@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Gson gson;
 
-    private final String URL = "https://translate.yandex.net/";
     private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
 
     @Override
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         createMapJson(null, "dictionare");
         initApiLanguageDictionare();
-        createRequestLanguageDictionare();
+        responseLanguageDictionare();
 
     }
 
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initGson(){
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(MapLanguage.class, new MapLanguageDesiareliser());
+        gsonBuilder.registerTypeAdapter(LanguageDictionare.class, new LanguageDictionareDesiareliser());
         gson = gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
     }
@@ -106,22 +105,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 createMapJson(textToYandex, "languageDetection");
 
-                createRequestLanguageDetection();
+                responseLanguageDetection();
 
                 createMapJson(textToYandex, "translator");
 
-                createRequestTranslator();
+                responseTranslator();
 
             break;
         }
     }
 
-    private void createRequestLanguageDetection(){
-        Call<LanguageDetectionResponse> call = apiLanguageDetection.languageDetection(mapJson);
+    private void responseLanguageDetection(){
+        Call<LanguageDetection> call = apiLanguageDetection.languageDetection(mapJson);
 
-        call.enqueue(new Callback<LanguageDetectionResponse>() {
+        call.enqueue(new Callback<LanguageDetection>() {
             @Override
-            public void onResponse(Call<LanguageDetectionResponse> call, Response<LanguageDetectionResponse> response) {
+            public void onResponse(Call<LanguageDetection> call, Response<LanguageDetection> response) {
                 try {
                     if (response.isSuccessful()){
                         String lang = response.body().getLang();
@@ -137,18 +136,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onFailure(Call<LanguageDetectionResponse> call, Throwable t) {
+            public void onFailure(Call<LanguageDetection> call, Throwable t) {
                 error();
             }
         });
     }
 
-    private void createRequestTranslator() {
-        Call<TranslatorResponse> call = apiTranslator.translate(mapJson);
+    private void responseTranslator() {
+        Call<Translator> call = apiTranslator.translate(mapJson);
 
-        call.enqueue(new Callback<TranslatorResponse>() {
+        call.enqueue(new Callback<Translator>() {
             @Override
-            public void onResponse(Call<TranslatorResponse> call, Response<TranslatorResponse> response) {
+            public void onResponse(Call<Translator> call, Response<Translator> response) {
                 try {
                     if (response.isSuccessful()){
                         textView.setText(response.body().getText().toString());
@@ -161,28 +160,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             @Override
-            public void onFailure(Call<TranslatorResponse> call, Throwable t) {
+            public void onFailure(Call<Translator> call, Throwable t) {
                 t.printStackTrace();
                 error();
             }
         });
     }
 
-    private void createRequestLanguageDictionare(){
+    private void responseLanguageDictionare(){
         Log.d(LOG_TAG, "Start createRequestLanguageDictionare");
-        Call<MapLanguage> call = apiDictionare.languageDictionare(mapJson);
+        Call<LanguageDictionare> call = apiDictionare.languageDictionare(mapJson);
 
-//        final Gson gson = new GsonBuilder().create();
-
-        call.enqueue(new Callback<MapLanguage>() {
+        call.enqueue(new Callback<LanguageDictionare>() {
             @Override
-            public void onResponse(Call<MapLanguage> call, Response<MapLanguage> response) {
+            public void onResponse(Call<LanguageDictionare> call, Response<LanguageDictionare> response) {
                 try {
                     Log.d(LOG_TAG, "Start onResponse");
                     if (response.isSuccessful()){
                         response.body().toString();
-                        MapLanguage mapLanguage = response.body();
-                        Log.d(LOG_TAG, "mapLanguage = " + mapLanguage);
+                        LanguageDictionare LanguageDictionare = response.body();
+                        Log.d(LOG_TAG, "mapLanguage = " + LanguageDictionare);
                     } else {
                         error();
                     }
@@ -195,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onFailure(Call<MapLanguage> call, Throwable t) {
+            public void onFailure(Call<LanguageDictionare> call, Throwable t) {
                 Log.d(LOG_TAG, "Start onFailure");
                 Log.d(LOG_TAG, "exeption = " + t.toString());
                 error();

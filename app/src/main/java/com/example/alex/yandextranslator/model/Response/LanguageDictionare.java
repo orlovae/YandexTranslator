@@ -1,20 +1,21 @@
-package com.example.alex.yandextranslator.model;
+package com.example.alex.yandextranslator.model.Response;
+
+import com.example.alex.yandextranslator.model.Language.CodeLanguage;
+import com.example.alex.yandextranslator.model.Language.Language;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by alex on 12.04.17.
  */
 
-public class MapLanguage {
+public class LanguageDictionare {
 
     private ArrayList<String> listDirs;
     private HashMap <CodeLanguage, Language> hashMapLanguageDictionare;
 
-    public MapLanguage(ArrayList<String> listDirs,
+    public LanguageDictionare(ArrayList<String> listDirs,
                        HashMap<CodeLanguage, Language> hashMapLanguageDictionare) {
         this.listDirs = listDirs;
         this.hashMapLanguageDictionare = hashMapLanguageDictionare;

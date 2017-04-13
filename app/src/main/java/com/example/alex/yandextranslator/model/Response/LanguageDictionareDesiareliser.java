@@ -1,7 +1,10 @@
-package com.example.alex.yandextranslator.model;
+package com.example.alex.yandextranslator.model.Response;
 
 import android.util.Log;
 
+import com.example.alex.yandextranslator.model.Language.CodeLanguage;
+import com.example.alex.yandextranslator.model.Language.Language;
+import com.example.alex.yandextranslator.model.Response.LanguageDictionare;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -19,11 +22,11 @@ import java.util.Map;
  * Created by alex on 12.04.17.
  */
 
-public class MapLanguageDesiareliser implements JsonDeserializer<MapLanguage> {
+public class LanguageDictionareDesiareliser implements JsonDeserializer<LanguageDictionare> {
     private final String LOG_TAG = this.getClass().getSimpleName();
 
     @Override
-    public MapLanguage deserialize(JsonElement jsonElement, Type typeOfT,
+    public LanguageDictionare deserialize(JsonElement jsonElement, Type typeOfT,
                                    JsonDeserializationContext context)
             throws JsonParseException {
         Log.d(LOG_TAG, "Start deserialize");
@@ -53,6 +56,6 @@ public class MapLanguageDesiareliser implements JsonDeserializer<MapLanguage> {
             languageValue.setLanguage(value);
             hashMapLanguageDictionare.put(codeLanguageKey, languageValue);
         }
-        return new MapLanguage(listDirs, hashMapLanguageDictionare);
+        return new LanguageDictionare(listDirs, hashMapLanguageDictionare);
     }
 }

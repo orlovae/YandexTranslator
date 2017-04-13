@@ -1,4 +1,4 @@
-package com.example.alex.yandextranslator.model;
+package com.example.alex.yandextranslator.model.Response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 
-public class LanguageDetectionResponse {
+public class LanguageDetection {
 
     @SerializedName("code")
     @Expose

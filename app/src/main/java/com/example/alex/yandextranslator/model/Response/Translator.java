@@ -1,4 +1,4 @@
-package com.example.alex.yandextranslator.model;
+package com.example.alex.yandextranslator.model.Response;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by alex on 10.04.17.
  */
 
-public class TranslatorResponse {
+public class Translator {
 
     @SerializedName("code")
     @Expose
