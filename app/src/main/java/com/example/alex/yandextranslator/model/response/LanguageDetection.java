@@ -1,4 +1,4 @@
-package com.example.alex.yandextranslator.model.Response;
+package com.example.alex.yandextranslator.model.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

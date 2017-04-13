@@ -1,6 +1,6 @@
 package com.example.alex.yandextranslator.rest;
 
-import com.example.alex.yandextranslator.model.Response.LanguageDetection;
+import com.example.alex.yandextranslator.model.response.LanguageDetection;
 
 import java.util.Map;
 

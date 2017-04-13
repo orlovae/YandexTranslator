@@ -1,10 +1,10 @@
-package com.example.alex.yandextranslator.model.Response;
+package com.example.alex.yandextranslator.adapter;
 
 import android.util.Log;
 
-import com.example.alex.yandextranslator.model.Language.CodeLanguage;
-import com.example.alex.yandextranslator.model.Language.Language;
-import com.example.alex.yandextranslator.model.Response.LanguageDictionare;
+import com.example.alex.yandextranslator.model.language.CodeLanguage;
+import com.example.alex.yandextranslator.model.language.Language;
+import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -22,7 +22,7 @@ import java.util.Map;
  * Created by alex on 12.04.17.
  */
 
-public class LanguageDictionareDesiareliser implements JsonDeserializer<LanguageDictionare> {
+public class LanguageDictionareAdapter implements JsonDeserializer<LanguageDictionare> {
     private final String LOG_TAG = this.getClass().getSimpleName();
 
     @Override

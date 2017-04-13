@@ -1,7 +1,7 @@
-package com.example.alex.yandextranslator.model.Response;
+package com.example.alex.yandextranslator.model.response;
 
-import com.example.alex.yandextranslator.model.Language.CodeLanguage;
-import com.example.alex.yandextranslator.model.Language.Language;
+import com.example.alex.yandextranslator.model.language.CodeLanguage;
+import com.example.alex.yandextranslator.model.language.Language;
 
 import java.util.ArrayList;
 import java.util.HashMap;

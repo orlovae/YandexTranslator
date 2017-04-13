@@ -1,4 +1,4 @@
-package com.example.alex.yandextranslator.model.Language;
+package com.example.alex.yandextranslator.model.language;
 
 /**
  * Created by alex on 12.04.17.

@@ -1,4 +1,4 @@
-package com.example.alex.yandextranslator.model.Response;
+package com.example.alex.yandextranslator.model.response;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

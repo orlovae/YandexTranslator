@@ -1,6 +1,6 @@
 package com.example.alex.yandextranslator.rest;
 
-import com.example.alex.yandextranslator.model.Response.LanguageDictionare;
+import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 
 import java.util.Map;
 
