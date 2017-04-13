@@ -15,7 +15,7 @@ public class LanguageDictionareResponse {
     private List<String> dirs = null;
     @SerializedName("langs")
     @Expose
-    private List<Lang> langs = null;
+    private MapLanguage langs = null;
 
     public List<String> getDirs() {
         return dirs;
@@ -25,12 +25,11 @@ public class LanguageDictionareResponse {
         this.dirs = dirs;
     }
 
-    public List<Lang> getLangs() {
+    public MapLanguage getLangs() {
         return langs;
     }
 
-    public void setLangs(List<Lang> langs) {
+    public void setLangs(MapLanguage langs) {
         this.langs = langs;
     }
-
 }

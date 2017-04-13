@@ -9,13 +9,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.alex.yandextranslator.model.Language;
 import com.example.alex.yandextranslator.model.LanguageDetectionResponse;
 import com.example.alex.yandextranslator.model.LanguageDictionareResponse;
+import com.example.alex.yandextranslator.model.ListLanguageDesiareliser;
 import com.example.alex.yandextranslator.model.TranslatorResponse;
 import com.example.alex.yandextranslator.rest.ApiClient;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiLanguageDetection;
 import com.example.alex.yandextranslator.rest.ApiTranslator;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -160,6 +163,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void createRequestLanguageDictionare(){
         Call<LanguageDictionareResponse> call = apiDictionare.languageDictionare(mapJson);
+        
+
+//        GsonBuilder gsonBuilder = new GsonBuilder();
+//        gsonBuilder.registerTypeAdapter(ListLanguage.class, new ListLanguageDesiareliser());
+//        Gson gson = gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+//                .create();
+
+
         final Gson gson = new GsonBuilder().create();
 
         call.enqueue(new Callback<LanguageDictionareResponse>() {
@@ -173,7 +184,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        for (Map.Entry entry : map.entrySet()){
 //                            Log.d(LOG_TAG, entry.getKey() + ":" + entry.getValue());
 //                        }
-                        Log.d(LOG_TAG, "response = " + response.body().toString());
+
+//                        Log.d(LOG_TAG, "response = " + response.body().toString());
+//                        Log.d(LOG_TAG, "size map = " + response.body().getLangs().getMapLanguages().size());
 
                     } else {
                         error();
@@ -204,18 +217,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case "dictionare":
                 Log.d(LOG_TAG, "Start createMapJson, case \"dictionare\"");
                 mapJson.put("key", KEY);
+                mapJson.put("ui", "ru");
                 Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
                 break;
             case "languageDetection":
                 Log.d(LOG_TAG, "Start createMapJson, case \"languageDetection\"");
                 mapJson.put("key", KEY);
                 mapJson.put("text", textToYandex);
+                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
                 break;
             case "translator":
                 Log.d(LOG_TAG, "Start createMapJson, case \"translator\"");
                 mapJson.put("key", KEY);
                 mapJson.put("text", textToYandex);
                 mapJson.put("lang", "en-ru");
+                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
                 break;
         }
     }
