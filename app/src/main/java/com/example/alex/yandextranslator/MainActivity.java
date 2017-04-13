@@ -9,10 +9,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.alex.yandextranslator.model.Language;
 import com.example.alex.yandextranslator.model.LanguageDetectionResponse;
-import com.example.alex.yandextranslator.model.LanguageDictionareResponse;
-import com.example.alex.yandextranslator.model.ListLanguageDesiareliser;
+import com.example.alex.yandextranslator.model.MapLanguage;
+import com.example.alex.yandextranslator.model.MapLanguageDesiareliser;
 import com.example.alex.yandextranslator.model.TranslatorResponse;
 import com.example.alex.yandextranslator.rest.ApiClient;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
@@ -28,8 +27,6 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private final String LOG_TAG = this.getClass().getSimpleName();
@@ -43,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ApiDictionare apiDictionare;
 
     private Map<String, String> mapJson;
+
+    private Gson gson;
 
     private final String URL = "https://translate.yandex.net/";
     private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
@@ -78,7 +77,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initApiLanguageDictionare(){
-        apiDictionare = ApiClient.getClient().create(ApiDictionare.class);
+        initGson();
+        apiDictionare = ApiClient.getClient(gson).create(ApiDictionare.class);
+    }
+
+    private void initGson(){
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(MapLanguage.class, new MapLanguageDesiareliser());
+        gson = gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
     }
 
     private void initApiLanguageDetection(){
@@ -162,44 +169,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void createRequestLanguageDictionare(){
-        Call<LanguageDictionareResponse> call = apiDictionare.languageDictionare(mapJson);
-        
+        Log.d(LOG_TAG, "Start createRequestLanguageDictionare");
+        Call<MapLanguage> call = apiDictionare.languageDictionare(mapJson);
 
-//        GsonBuilder gsonBuilder = new GsonBuilder();
-//        gsonBuilder.registerTypeAdapter(ListLanguage.class, new ListLanguageDesiareliser());
-//        Gson gson = gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-//                .create();
+//        final Gson gson = new GsonBuilder().create();
 
-
-        final Gson gson = new GsonBuilder().create();
-
-        call.enqueue(new Callback<LanguageDictionareResponse>() {
+        call.enqueue(new Callback<MapLanguage>() {
             @Override
-            public void onResponse(Call<LanguageDictionareResponse> call, Response<LanguageDictionareResponse> response) {
+            public void onResponse(Call<MapLanguage> call, Response<MapLanguage> response) {
                 try {
+                    Log.d(LOG_TAG, "Start onResponse");
                     if (response.isSuccessful()){
                         response.body().toString();
-//                        Map<String, String> map = gson.fromJson(response.body().toString(), Map.class);
-//
-//                        for (Map.Entry entry : map.entrySet()){
-//                            Log.d(LOG_TAG, entry.getKey() + ":" + entry.getValue());
-//                        }
-
-//                        Log.d(LOG_TAG, "response = " + response.body().toString());
-//                        Log.d(LOG_TAG, "size map = " + response.body().getLangs().getMapLanguages().size());
-
+                        MapLanguage mapLanguage = response.body();
+                        Log.d(LOG_TAG, "mapLanguage = " + mapLanguage);
                     } else {
                         error();
                     }
 
                 } catch (Exception e) {
+                    Log.d(LOG_TAG, "Start Exception");
                     e.printStackTrace();
                     error();
                 }
             }
 
             @Override
-            public void onFailure(Call<LanguageDictionareResponse> call, Throwable t) {
+            public void onFailure(Call<MapLanguage> call, Throwable t) {
+                Log.d(LOG_TAG, "Start onFailure");
+                Log.d(LOG_TAG, "exeption = " + t.toString());
                 error();
             }
         });

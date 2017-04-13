@@ -2,6 +2,8 @@ package com.example.alex.yandextranslator.rest;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -25,6 +27,16 @@ public class ApiClient {
             retrofit = new Retrofit.Builder().client(client)
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
+    }
+
+    public static Retrofit getClient(Gson gson){
+        if (retrofit == null){
+            retrofit = new Retrofit.Builder().client(client)
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit;
