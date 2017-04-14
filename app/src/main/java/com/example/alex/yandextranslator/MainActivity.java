@@ -9,10 +9,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.alex.yandextranslator.model.Response.LanguageDetection;
-import com.example.alex.yandextranslator.model.Response.LanguageDictionare;
-import com.example.alex.yandextranslator.model.Response.LanguageDictionareDesiareliser;
-import com.example.alex.yandextranslator.model.Response.Translator;
+import com.example.alex.yandextranslator.model.response.LanguageDetection;
+import com.example.alex.yandextranslator.model.response.LanguageDictionare;
+import com.example.alex.yandextranslator.model.response.Translator;
+import com.example.alex.yandextranslator.adapter.LanguageDictionareAdapter;
 import com.example.alex.yandextranslator.rest.ApiClient;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiLanguageDetection;
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initGson(){
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LanguageDictionare.class, new LanguageDictionareDesiareliser());
+        gsonBuilder.registerTypeAdapter(LanguageDictionare.class, new LanguageDictionareAdapter());
         gson = gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
     }
