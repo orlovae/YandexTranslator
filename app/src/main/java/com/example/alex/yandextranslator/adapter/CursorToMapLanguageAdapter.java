@@ -2,6 +2,7 @@ package com.example.alex.yandextranslator.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.example.alex.yandextranslator.model.language.CodeLanguage;
 import com.example.alex.yandextranslator.model.language.Language;
@@ -18,15 +19,18 @@ import static com.example.alex.yandextranslator.data.tables.LanguageTable.COLUMN
  */
 
 public class CursorToMapLanguageAdapter {
+    private final String LOG_TAG = this.getClass().getSimpleName();
     private Context context;
     private Cursor cursor;
     private HashMap<CodeLanguage, Language> hashMapLanguageDictionare;
+    private String languageFromCursor;
 
     public CursorToMapLanguageAdapter(Cursor cursor) {
         this.cursor = cursor;
     }
 
-    public HashMap<CodeLanguage, Language> getResultToCursor(){
+    public HashMap<CodeLanguage, Language> getHashMapToCursor(){
+        Log.d(LOG_TAG, "Start getHashMapToCursor");
         if (hashMapLanguageDictionare == null) {
             hashMapLanguageDictionare = new HashMap<CodeLanguage, Language>();
         } else {
@@ -55,5 +59,25 @@ public class CursorToMapLanguageAdapter {
             if (cursor != null) cursor.close();
         }
         return hashMapLanguageDictionare;
+    }
+
+    public String getStringLanguageToCursor(){
+        Log.d(LOG_TAG, "Start getStringLanguageToCursor");
+        if (languageFromCursor != null) {
+            languageFromCursor = null;
+        }
+
+        try {
+            if (cursor != null){
+                cursor.moveToLast();
+                int languageColIndex = cursor.getColumnIndex(COLUMN_LANGUAGE);
+                languageFromCursor = cursor.getString(languageColIndex);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return languageFromCursor;
     }
 }

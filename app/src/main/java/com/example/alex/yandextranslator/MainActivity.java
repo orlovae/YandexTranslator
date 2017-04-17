@@ -2,7 +2,6 @@ package com.example.alex.yandextranslator;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -16,9 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alex.yandextranslator.adapter.CursorToMapLanguageAdapter;
-import com.example.alex.yandextranslator.contentprovider.YandexTranslatorProvider;
 import com.example.alex.yandextranslator.data.Contract;
-import com.example.alex.yandextranslator.data.tables.LanguageTable;
 import com.example.alex.yandextranslator.model.language.CodeLanguage;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDetection;
@@ -44,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LoaderManager.LoaderCallbacks<Cursor>{
     private final String LOG_TAG = this.getClass().getSimpleName();
 
-    private TextView textView;
+    private TextView textViewTranslate;
+    private TextView textViewLanguageText, textViewRevers, textViewLanguageTranslation;
     private EditText editText;
     private Button button;
 
@@ -163,9 +161,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onResponse(Call<Translator> call, Response<Translator> response) {
                 try {
                     if (response.isSuccessful()){
-                        textView.setText(response.body().getText().toString());
+                        textViewTranslate.setText(response.body().getText().toString());
                     } else {
-                        textView.setText(R.string.error_invalid_responce);
+                        textViewTranslate.setText(R.string.error_invalid_responce);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -248,7 +246,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
         editText = (EditText)findViewById(R.id.edit_text);
         button = (Button)findViewById(R.id.button);
-        textView = (TextView)findViewById(R.id.text_view);
+        textViewTranslate = (TextView)findViewById(R.id.text_view_translate);
+        textViewLanguageText = (TextView)findViewById(R.id.text_view_language_text);
+        textViewRevers = (TextView)findViewById(R.id.text_view_revers);
+        textViewRevers.setText(R.string.revers);
+        textViewLanguageTranslation = (TextView)findViewById(R.id.text_view_language_translator);
+        setIntiTextViewSelectLanguage();
+    }
+
+    private void setIntiTextViewSelectLanguage(){
+        Log.d(LOG_TAG, "Start setIntiTextViewSelectLanguage");
+
+        String stringTextViewLanguageText = getStringLanguage("en");
+        Log.d(LOG_TAG, "setIntiTextViewSelectLanguage = " + stringTextViewLanguageText);
+        String stringTextViewLanguageTranslation = getStringLanguage("ru");
+        textViewLanguageText.setText(stringTextViewLanguageText);
+        textViewLanguageTranslation.setText(stringTextViewLanguageTranslation);
+    }
+
+    private String getStringLanguage(String codeLanguage){
+        Log.d(LOG_TAG, "Start getStringLanguage");
+
+        String selection = Contract.Language.COLUMN_CODE_LANGUAGE + "=?";
+
+        String[] selectionArgs = {codeLanguage};
+
+        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
+                null, selection, selectionArgs, null);
+        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
+
+        return cursorToMapLanguageAdapter.getStringLanguageToCursor();
     }
 
     private String getEditText(EditText editText){
@@ -270,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
 
         HashMap <CodeLanguage, Language> hashMapLanguageDictionareFromCursor =
-                cursorToMapLanguageAdapter.getResultToCursor();
+                cursorToMapLanguageAdapter.getHashMapToCursor();
         HashMap <CodeLanguage, Language> hashMapLanguageDictionareFromResponse =
                 languageDictionare.getHashMapLanguageDictionare();
 //        Log.d(LOG_TAG, "Сравнение баз данных: " + hashMapLanguageDictionareFromResponse.equals(hashMapLanguageDictionareFromCursor));

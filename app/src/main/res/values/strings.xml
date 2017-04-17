@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">YandexTranslator</string>
     <string name="error_invalid_responce">invalid response from the server</string>
+    <string name="revers">&lt;-&gt;</string>
 </resources>
