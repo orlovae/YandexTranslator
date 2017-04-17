@@ -4,36 +4,35 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.example.alex.yandextranslator.database.tables.LanguageTable.COLUMN_CODE_LANGUAGE;
-import static com.example.alex.yandextranslator.database.tables.LanguageTable.COLUMN_LANGUAGE;
-import static com.example.alex.yandextranslator.database.tables.LanguageTable.COLUMN_LANGUAGE_ID;
-import static com.example.alex.yandextranslator.database.tables.LanguageTable.DATABASE_TABLE;
-import static com.example.alex.yandextranslator.database.tables.LanguageTable.DATABASE_VERSION;
+import static com.example.alex.yandextranslator.data.tables.LanguageTable.COLUMN_CODE_LANGUAGE;
+import static com.example.alex.yandextranslator.data.tables.LanguageTable.COLUMN_ID;
+import static com.example.alex.yandextranslator.data.tables.LanguageTable.COLUMN_LANGUAGE;
+import static com.example.alex.yandextranslator.data.tables.LanguageTable.TABLE_NAME;
+import static com.example.alex.yandextranslator.data.tables.LanguageTable.TABLE_VERSION;
 
 /**
  * Created by alex on 14.04.17.
  */
 
 public class DBHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_CREATE ="CREATE TABLE " +
-            DATABASE_TABLE + " ("
-            + COLUMN_LANGUAGE_ID + " integer primary key autoincrement,"
+    private static final String DATABASE_NAME = "yandexTranslator.db";
+    private final String SQL_CREATE_LAGUAGE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
+            + COLUMN_ID + " integer primary key autoincrement,"
             + COLUMN_CODE_LANGUAGE + " text,"
             + COLUMN_LANGUAGE + " text);";
 
     public DBHelper(Context context){
-        super(context, DATABASE_TABLE, null, DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, TABLE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DATABASE_CREATE);
-
+    public void onCreate(SQLiteDatabase database) {
+        database.execSQL(SQL_CREATE_LAGUAGE_TABLE);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
-        onCreate(db);
+    public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(database);
     }
 }

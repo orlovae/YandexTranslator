@@ -20,8 +20,9 @@
         </activity>
 
         <provider
-            android:authorities="com.example.alex.yandextranslator.contentprovider.YandexTranslatorProvider"
-            android:name=".contentprovider.YandexTranslatorProvider" />
+            android:name=".contentprovider.YandexTranslatorProvider"
+            android:authorities="com.example.alex.yandextranslator"
+            android:exported="false" />
     </application>
 
 </manifest>

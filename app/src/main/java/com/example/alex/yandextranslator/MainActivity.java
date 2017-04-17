@@ -1,5 +1,11 @@
 package com.example.alex.yandextranslator;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +15,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.alex.yandextranslator.adapter.CursorToMapLanguageAdapter;
+import com.example.alex.yandextranslator.contentprovider.YandexTranslatorProvider;
+import com.example.alex.yandextranslator.data.Contract;
+import com.example.alex.yandextranslator.data.tables.LanguageTable;
+import com.example.alex.yandextranslator.model.language.CodeLanguage;
+import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDetection;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.example.alex.yandextranslator.model.response.Translator;
@@ -28,7 +40,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,
+        LoaderManager.LoaderCallbacks<Cursor>{
     private final String LOG_TAG = this.getClass().getSimpleName();
 
     private TextView textView;
@@ -178,8 +191,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(LOG_TAG, "Start onResponse");
                     if (response.isSuccessful()){
                         response.body().toString();
-                        LanguageDictionare LanguageDictionare = response.body();
-                        Log.d(LOG_TAG, "mapLanguage = " + LanguageDictionare);
+                        LanguageDictionare languageDictionare = response.body();
+                        initDataBase(languageDictionare);
+                        Log.d(LOG_TAG, "mapLanguage = " + languageDictionare);
                     } else {
                         error();
                     }
@@ -247,4 +261,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(MainActivity.this, R.string.error_invalid_responce, Toast.LENGTH_LONG).show();
     }
 
+    private void initDataBase (LanguageDictionare languageDictionare){
+        Log.d(LOG_TAG, "Start initDataBase");
+
+        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI, null, null, null,
+                null);
+
+        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
+
+        HashMap <CodeLanguage, Language> hashMapLanguageDictionareFromCursor =
+                cursorToMapLanguageAdapter.getResultToCursor();
+        HashMap <CodeLanguage, Language> hashMapLanguageDictionareFromResponse =
+                languageDictionare.getHashMapLanguageDictionare();
+//        Log.d(LOG_TAG, "Сравнение баз данных: " + hashMapLanguageDictionareFromResponse.equals(hashMapLanguageDictionareFromCursor));
+//        Log.d(LOG_TAG, "hashMapLanguageDictionareFromResponse hashCode: " + hashMapLanguageDictionareFromResponse.hashCode());
+//        Log.d(LOG_TAG, "hashMapLanguageDictionareFromCursor hashCode: " + hashMapLanguageDictionareFromCursor.hashCode());
+        if (!hashMapLanguageDictionareFromResponse.equals(hashMapLanguageDictionareFromCursor)){
+            getContentResolver().delete(Contract.Language.CONTENT_URI, null, null);
+            createNewLanguageTable(hashMapLanguageDictionareFromResponse);
+        }
+    }
+
+    private void createNewLanguageTable(HashMap <CodeLanguage, Language> hashMapLanguageDictionareFromResponse){
+        Log.d(LOG_TAG, "Start createNewLanguageTable");
+        for (Map.Entry<CodeLanguage, Language> entry : hashMapLanguageDictionareFromResponse.entrySet()){
+            ContentValues cv = new ContentValues();
+            cv.put(Contract.Language.COLUMN_CODE_LANGUAGE, entry.getKey().getCodeLanguage());
+            cv.put(Contract.Language.COLUMN_LANGUAGE, entry.getValue().getLanguage());
+
+            getContentResolver().insert(Contract.Language.CONTENT_URI, cv);
+        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                Contract.Language._ID,
+                Contract.Language.COLUMN_CODE_LANGUAGE,
+                Contract.Language.COLUMN_LANGUAGE
+        };
+        return new CursorLoader(this,
+                Contract.Language.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }

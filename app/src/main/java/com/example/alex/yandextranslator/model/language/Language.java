@@ -16,4 +16,19 @@ public class Language {
         this.language = language;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Language)) return false;
+
+        Language language1 = (Language) o;
+
+        return language != null ? language.equals(language1.language) : language1.language == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return language != null ? language.hashCode() : 0;
+    }
 }
