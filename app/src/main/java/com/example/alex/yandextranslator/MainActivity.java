@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void buttonBehavior() {
         button.setOnClickListener(this);
+        textViewRevers.setOnClickListener(this);
     }
 
     private void initApiLanguageDictionare(){
@@ -123,7 +124,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 responseTranslator();
 
             break;
+            case R.id.text_view_revers:
+                reversTextViewLanguageSelect();
+                break;
         }
+    }
+
+    private void reversTextViewLanguageSelect(){
+        String stringTextViewLanguageText = textViewLanguageText.getText().toString();
+        String stringTextViewLanguageTranslation = textViewLanguageTranslation.getText().toString();
+        textViewLanguageText.setText(stringTextViewLanguageTranslation);
+        textViewLanguageTranslation.setText(stringTextViewLanguageText);
     }
 
     private void responseLanguageDetection(){
@@ -255,17 +266,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setIntiTextViewSelectLanguage(){
-        Log.d(LOG_TAG, "Start setIntiTextViewSelectLanguage");
-
         String stringTextViewLanguageText = getStringLanguage("en");
-        Log.d(LOG_TAG, "setIntiTextViewSelectLanguage = " + stringTextViewLanguageText);
         String stringTextViewLanguageTranslation = getStringLanguage("ru");
         textViewLanguageText.setText(stringTextViewLanguageText);
         textViewLanguageTranslation.setText(stringTextViewLanguageTranslation);
     }
 
     private String getStringLanguage(String codeLanguage){
-        Log.d(LOG_TAG, "Start getStringLanguage");
 
         String selection = Contract.Language.COLUMN_CODE_LANGUAGE + "=?";
 

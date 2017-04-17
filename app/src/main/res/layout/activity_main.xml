@@ -13,18 +13,24 @@
 
         <TextView
             android:id="@+id/text_view_language_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.45"
+            android:gravity="right" />
 
         <TextView
             android:id="@+id/text_view_revers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:gravity="center"/>
 
         <TextView
             android:id="@+id/text_view_language_translator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.45"
+            android:gravity="left" />
 
     </LinearLayout>
 
