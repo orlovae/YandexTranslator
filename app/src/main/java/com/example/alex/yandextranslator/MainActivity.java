@@ -1,5 +1,6 @@
 package com.example.alex.yandextranslator;
 
+import android.app.DialogFragment;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.support.v4.app.LoaderManager;
@@ -46,11 +47,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editText;
     private Button button;
 
+    private DialogFragment dialogFragmentSelectLanguageText, dialogFragmentSelectTranslator;
+
     private ApiTranslator apiTranslator;
     private ApiLanguageDetection apiLanguageDetection;
     private ApiDictionare apiDictionare;
 
-//    private HashMap<CodeLanguage, Language> hashMapLanguageText, hashMapLanguageTranslation;
+    private ArrayList<Language> listLanguageText, listLanguageTranslation;
 
     private Map<String, String> mapJson;
 
@@ -67,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initView();
 
+        initDialog();
+
         initApiLanguageDetection();
 
         initApiTranslator();
@@ -75,10 +80,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void initDialog(){
+        dialogFragmentSelectLanguageText = new DialogLanguageSelect();
+        dialogFragmentSelectTranslator = new DialogLanguageSelect();
+    }
+
     private void initDictionare() {
         Log.d(LOG_TAG, "Start initDictionare");
 
-        createMapJson(null, "dictionare");
+        createMapJson(null, "dictionare", null);
         initApiLanguageDictionare();
         responseLanguageDictionare();
 
@@ -86,7 +96,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void buttonBehavior() {
         button.setOnClickListener(this);
+        textViewLanguageText.setOnClickListener(this);
         textViewRevers.setOnClickListener(this);
+        textViewLanguageTranslation.setOnClickListener(this);
     }
 
     private void initApiLanguageDictionare(){
@@ -117,11 +129,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String textToYandex = getEditText(editText);
 //                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
 
-                createMapJson(textToYandex, "languageDetection");
+                createMapJson(textToYandex, "languageDetection", null);
 
                 responseLanguageDetection();
 
-                createMapJson(textToYandex, "translator");
+                String lang = setLang();
+                Log.d(LOG_TAG, "lang = " + lang);
+
+                createMapJson(textToYandex, "translator", lang);
 
                 responseTranslator();
 
@@ -129,7 +144,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.text_view_revers:
                 reversTextViewLanguageSelect();
                 break;
+            case R.id.text_view_language_text:
+                dialogFragmentSelectLanguageText.show(getFragmentManager(), "dialog1");
+                break;
+            case R.id.text_view_language_translator:
+                dialogFragmentSelectTranslator.show(getFragmentManager(), "dialog2");
         }
+    }
+
+    private String setLang(){
+        String languageText = listLanguageText.get(0).getCodeLanguage();
+        String languageTranslator = listLanguageTranslation.get(0).getCodeLanguage();
+        String lang = languageText + "-" + languageTranslator;
+
+        return lang;
     }
 
     private void reversTextViewLanguageSelect(){
@@ -225,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void createMapJson(String textToYandex, String key) {
+    private void createMapJson(String textToYandex, String key, String lang) {
         Log.d(LOG_TAG, "Start createMapJson");
         if (mapJson == null) {
             mapJson = new HashMap<>();
@@ -250,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d(LOG_TAG, "Start createMapJson, case \"translator\"");
                 mapJson.put("key", KEY);
                 mapJson.put("text", textToYandex);
-                mapJson.put("lang", "en-ru");
+                mapJson.put("lang", lang);
                 Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
                 break;
         }
@@ -264,28 +292,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textViewRevers = (TextView)findViewById(R.id.text_view_revers);
         textViewRevers.setText(R.string.revers);
         textViewLanguageTranslation = (TextView)findViewById(R.id.text_view_language_translator);
-//        setIntiTextViewSelectLanguage();
+        setIntiTextViewSelectLanguage();
     }
 
-//    private void setIntiTextViewSelectLanguage(){
-//        hashMapLanguageText = getHashMapLanguage("en");
-//        hashMapLanguageTranslation = getHashMapLanguage("ru");
-////        textViewLanguageText.setText(hashMapLanguageText.);
-////        textViewLanguageTranslation.setText(stringTextViewLanguageTranslation);
-//    }
-//
-//    private HashMap<CodeLanguage, Language> getHashMapLanguage(String codeLanguage){
-//
-//        String selection = Contract.Language.COLUMN_CODE_LANGUAGE + "=?";
-//
-//        String[] selectionArgs = {codeLanguage};
-//
-//        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
-//                null, selection, selectionArgs, null);
-//        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
-//
-//        return cursorToMapLanguageAdapter.getHashMapToCursor();
-//    }
+    private void setIntiTextViewSelectLanguage(){
+        listLanguageText = getListLanguage("en");
+        listLanguageTranslation = getListLanguage("ru");
+        textViewLanguageText.setText(listLanguageText.get(0).getLanguage());
+        textViewLanguageTranslation.setText(listLanguageTranslation.get(0).getLanguage());
+    }
+
+    private ArrayList<Language> getListLanguage(String codeLanguage){
+
+        String selection = Contract.Language.COLUMN_CODE_LANGUAGE + "=?";
+
+        String[] selectionArgs = {codeLanguage};
+
+        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
+                null, selection, selectionArgs, null);
+        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
+
+        return cursorToMapLanguageAdapter.getListToCursor();
+    }
 
     private String getEditText(EditText editText){
         String text = editText.getText().toString();
