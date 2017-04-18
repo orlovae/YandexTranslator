@@ -4,12 +4,15 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.example.alex.yandextranslator.adapter.RecyclerViewForDialiLuguageSelect;
 
 /**
  * Created by alex on 17.04.17.
@@ -18,11 +21,11 @@ import android.widget.TextView;
 public class DialogLanguageSelect extends DialogFragment implements View.OnClickListener {
     private TextView textViewBack, textViewLanguageText;
     private RecyclerView recyclerView;
-    private String[] stringLanguage;
+    private String[] languages;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        stringLanguage = getArguments().getStringArray("language");
+        languages = getArguments().getStringArray("language");
 
         return super.onCreateDialog(savedInstanceState);
     }
@@ -35,6 +38,7 @@ public class DialogLanguageSelect extends DialogFragment implements View.OnClick
         View view = inflater.inflate(R.layout.dialog_language_select, null, false);
 
         initView(view);
+        setRecyclerView();
 
         return view;
     }
@@ -43,6 +47,13 @@ public class DialogLanguageSelect extends DialogFragment implements View.OnClick
         textViewBack = (TextView)view.findViewById(R.id.text_view_back);
         textViewLanguageText = (TextView)view.findViewById(R.id.text_view_title);
         recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
+    }
+
+    private void setRecyclerView(){
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(new RecyclerViewForDialiLuguageSelect(languages, getActivity()));
     }
 
     @Override
