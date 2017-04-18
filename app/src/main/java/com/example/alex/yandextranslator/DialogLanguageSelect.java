@@ -1,5 +1,6 @@
 package com.example.alex.yandextranslator;
 
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 /**
@@ -16,6 +18,14 @@ import android.widget.TextView;
 public class DialogLanguageSelect extends DialogFragment implements View.OnClickListener {
     private TextView textViewBack, textViewLanguageText;
     private RecyclerView recyclerView;
+    private String[] stringLanguage;
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        stringLanguage = getArguments().getStringArray("language");
+
+        return super.onCreateDialog(savedInstanceState);
+    }
 
     @Nullable
     @Override

@@ -20,7 +20,7 @@ public class CursorToMapLanguageAdapter {
     private Context context;
     private Cursor cursor;
     private ArrayList<Language> listLanguage;
-    private String languageFromCursor;
+    private ArrayList<String> listStringLanguage;
 
     public CursorToMapLanguageAdapter(Cursor cursor) {
         this.cursor = cursor;
@@ -55,23 +55,27 @@ public class CursorToMapLanguageAdapter {
         return listLanguage;
     }
 
-//    public String getStringLanguageToCursor(){
-//        Log.d(LOG_TAG, "Start getStringLanguageToCursor");
-//        if (languageFromCursor != null) {
-//            languageFromCursor = null;
-//        }
-//
-//        try {
-//            if (cursor != null){
-//                cursor.moveToLast();
-//                int languageColIndex = cursor.getColumnIndex(COLUMN_LANGUAGE);
-//                languageFromCursor = cursor.getString(languageColIndex);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (cursor != null) cursor.close();
-//        }
-//        return languageFromCursor;
-//    }
+    public String[] getStringArayLanguageToCursor(){
+        Log.d(LOG_TAG, "Start getStringLanguageToCursor");
+        String language;
+
+        if (listStringLanguage == null) {
+            listStringLanguage = new ArrayList<>();
+        } else {
+            listStringLanguage.clear();
+        }
+
+        try {
+            if (cursor != null && cursor.moveToFirst()){
+                int languageColIndex = cursor.getColumnIndex(COLUMN_LANGUAGE);
+                language = cursor.getString(languageColIndex);
+                listStringLanguage.add(language);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return listStringLanguage.toArray(new String[listStringLanguage.size()]);
+    }
 }

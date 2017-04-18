@@ -81,8 +81,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initDialog(){
+        String[] language = getStringLanguage();
+        Bundle args = new Bundle();
+        args.putStringArray("language", language);
+
         dialogFragmentSelectLanguageText = new DialogLanguageSelect();
+        dialogFragmentSelectLanguageText.setArguments(args);
+
         dialogFragmentSelectTranslator = new DialogLanguageSelect();
+        dialogFragmentSelectTranslator.setArguments(args);
     }
 
     private void initDictionare() {
@@ -313,6 +320,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
 
         return cursorToMapLanguageAdapter.getListToCursor();
+    }
+
+    private String[] getStringLanguage(){
+        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
+                null, null, null, null);
+        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
+
+        return cursorToMapLanguageAdapter.getStringArayLanguageToCursor();
     }
 
     private String getEditText(EditText editText){
