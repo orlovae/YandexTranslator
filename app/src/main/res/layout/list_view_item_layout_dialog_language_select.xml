@@ -2,14 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <CheckedTextView
-        android:id="@+id/text_view_language"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/recycler_view_tv_language"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="left"
-        android:checked="false"
-        android:checkMark="@string/checked" />
+        android:layout_weight="0.95"
+        android:gravity="left" />
+
+    <TextView
+        android:id="@+id/recycler_view_tv_language_check"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.05"
+        android:gravity="center"
+        android:text="@string/checked"
+        android:visibility="gone"/>
 
 </LinearLayout>

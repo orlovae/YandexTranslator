@@ -70,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initView();
 
-        initDialog();
-
         initApiLanguageDetection();
 
         initApiTranslator();
@@ -80,21 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void initDialog(){
-        String[] language = getStringLanguage();
-        Bundle args = new Bundle();
-        args.putStringArray("language", language);
-
-        dialogFragmentSelectLanguageText = new DialogLanguageSelect();
-        dialogFragmentSelectLanguageText.setArguments(args);
-
-        dialogFragmentSelectTranslator = new DialogLanguageSelect();
-        dialogFragmentSelectTranslator.setArguments(args);
-    }
-
     private void initDictionare() {
-        Log.d(LOG_TAG, "Start initDictionare");
-
         createMapJson(null, "dictionare", null);
         initApiLanguageDictionare();
         responseLanguageDictionare();
@@ -152,11 +136,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 reversTextViewLanguageSelect();
                 break;
             case R.id.text_view_language_text:
-                dialogFragmentSelectLanguageText.show(getFragmentManager(), "dialog1");
+                startDialogSelectLanguage(dialogFragmentSelectLanguageText, textViewLanguageText);
                 break;
             case R.id.text_view_language_translator:
-                dialogFragmentSelectTranslator.show(getFragmentManager(), "dialog2");
+                startDialogSelectLanguage(dialogFragmentSelectTranslator,
+                        textViewLanguageTranslation);
+                break;
         }
+    }
+
+    private void startDialogSelectLanguage(DialogFragment dialogLanguageSelect, TextView textView){
+        String[] language = getStringLanguage();
+        Bundle args = new Bundle();
+        args.putStringArray("language", language);
+        args.putString("languageSelect", textView.getText().toString());
+
+        dialogLanguageSelect = new DialogLanguageSelect();
+        dialogLanguageSelect.setArguments(args);
+        dialogLanguageSelect.show(getFragmentManager(), "dialog1");
     }
 
     private String setLang(){
@@ -343,8 +340,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initDataBase (LanguageDictionare languageDictionare){
         Log.d(LOG_TAG, "Start initDataBase");
 
-        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI, null, null, null,
-                null);
+        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
+                null, null, null, null);
 
         CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
 

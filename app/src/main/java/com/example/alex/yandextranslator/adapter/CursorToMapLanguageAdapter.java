@@ -27,7 +27,7 @@ public class CursorToMapLanguageAdapter {
     }
 
     public ArrayList<Language> getListToCursor(){
-        Log.d(LOG_TAG, "Start getHashMapToCursor");
+        Log.d(LOG_TAG, "Start getListToCursor");
         if (listLanguage == null) {
             listLanguage = new ArrayList<>();
         } else {
@@ -68,8 +68,12 @@ public class CursorToMapLanguageAdapter {
         try {
             if (cursor != null && cursor.moveToFirst()){
                 int languageColIndex = cursor.getColumnIndex(COLUMN_LANGUAGE);
-                language = cursor.getString(languageColIndex);
-                listStringLanguage.add(language);
+                do {
+                    language = cursor.getString(languageColIndex);
+                    Log.d(LOG_TAG, "language = " + language);
+                    listStringLanguage.add(language);
+                } while (cursor.moveToNext());
+
             }
         } catch (Exception e) {
             e.printStackTrace();
