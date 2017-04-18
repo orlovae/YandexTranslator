@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.example.alex.yandextranslator.adapter.CursorToMapLanguageAdapter;
 import com.example.alex.yandextranslator.data.Contract;
-import com.example.alex.yandextranslator.model.language.CodeLanguage;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDetection;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
@@ -30,6 +29,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ApiTranslator apiTranslator;
     private ApiLanguageDetection apiLanguageDetection;
     private ApiDictionare apiDictionare;
+
+//    private HashMap<CodeLanguage, Language> hashMapLanguageText, hashMapLanguageTranslation;
 
     private Map<String, String> mapJson;
 
@@ -262,28 +264,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textViewRevers = (TextView)findViewById(R.id.text_view_revers);
         textViewRevers.setText(R.string.revers);
         textViewLanguageTranslation = (TextView)findViewById(R.id.text_view_language_translator);
-        setIntiTextViewSelectLanguage();
+//        setIntiTextViewSelectLanguage();
     }
 
-    private void setIntiTextViewSelectLanguage(){
-        String stringTextViewLanguageText = getStringLanguage("en");
-        String stringTextViewLanguageTranslation = getStringLanguage("ru");
-        textViewLanguageText.setText(stringTextViewLanguageText);
-        textViewLanguageTranslation.setText(stringTextViewLanguageTranslation);
-    }
-
-    private String getStringLanguage(String codeLanguage){
-
-        String selection = Contract.Language.COLUMN_CODE_LANGUAGE + "=?";
-
-        String[] selectionArgs = {codeLanguage};
-
-        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
-                null, selection, selectionArgs, null);
-        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
-
-        return cursorToMapLanguageAdapter.getStringLanguageToCursor();
-    }
+//    private void setIntiTextViewSelectLanguage(){
+//        hashMapLanguageText = getHashMapLanguage("en");
+//        hashMapLanguageTranslation = getHashMapLanguage("ru");
+////        textViewLanguageText.setText(hashMapLanguageText.);
+////        textViewLanguageTranslation.setText(stringTextViewLanguageTranslation);
+//    }
+//
+//    private HashMap<CodeLanguage, Language> getHashMapLanguage(String codeLanguage){
+//
+//        String selection = Contract.Language.COLUMN_CODE_LANGUAGE + "=?";
+//
+//        String[] selectionArgs = {codeLanguage};
+//
+//        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
+//                null, selection, selectionArgs, null);
+//        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
+//
+//        return cursorToMapLanguageAdapter.getHashMapToCursor();
+//    }
 
     private String getEditText(EditText editText){
         String text = editText.getText().toString();
@@ -303,25 +305,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
 
-        HashMap <CodeLanguage, Language> hashMapLanguageDictionareFromCursor =
-                cursorToMapLanguageAdapter.getHashMapToCursor();
-        HashMap <CodeLanguage, Language> hashMapLanguageDictionareFromResponse =
-                languageDictionare.getHashMapLanguageDictionare();
+        ArrayList<Language> listLanguageFromCursor = cursorToMapLanguageAdapter.getListToCursor();
+        ArrayList<Language> listLanguageFromResponse = languageDictionare.getListLanguage();
 //        Log.d(LOG_TAG, "Сравнение баз данных: " + hashMapLanguageDictionareFromResponse.equals(hashMapLanguageDictionareFromCursor));
 //        Log.d(LOG_TAG, "hashMapLanguageDictionareFromResponse hashCode: " + hashMapLanguageDictionareFromResponse.hashCode());
 //        Log.d(LOG_TAG, "hashMapLanguageDictionareFromCursor hashCode: " + hashMapLanguageDictionareFromCursor.hashCode());
-        if (!hashMapLanguageDictionareFromResponse.equals(hashMapLanguageDictionareFromCursor)){
+        if (!listLanguageFromResponse.equals(listLanguageFromCursor)){
             getContentResolver().delete(Contract.Language.CONTENT_URI, null, null);
-            createNewLanguageTable(hashMapLanguageDictionareFromResponse);
+            createNewLanguageTable(listLanguageFromResponse);
         }
     }
 
-    private void createNewLanguageTable(HashMap <CodeLanguage, Language> hashMapLanguageDictionareFromResponse){
+    private void createNewLanguageTable(ArrayList<Language> listLanguageFromResponse){
         Log.d(LOG_TAG, "Start createNewLanguageTable");
-        for (Map.Entry<CodeLanguage, Language> entry : hashMapLanguageDictionareFromResponse.entrySet()){
+        for (Language language : listLanguageFromResponse){
             ContentValues cv = new ContentValues();
-            cv.put(Contract.Language.COLUMN_CODE_LANGUAGE, entry.getKey().getCodeLanguage());
-            cv.put(Contract.Language.COLUMN_LANGUAGE, entry.getValue().getLanguage());
+            cv.put(Contract.Language.COLUMN_CODE_LANGUAGE, language.getCodeLanguage());
+            cv.put(Contract.Language.COLUMN_LANGUAGE, language.getLanguage());
 
             getContentResolver().insert(Contract.Language.CONTENT_URI, cv);
         }

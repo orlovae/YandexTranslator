@@ -6,7 +6,25 @@ package com.example.alex.yandextranslator.model.language;
 
 public class Language {
 
+    private String codeLanguage;
+
     private String language;
+
+    public Language() {
+    }
+
+    public Language(String codeLanguage, String language) {
+        this.codeLanguage = codeLanguage;
+        this.language = language;
+    }
+
+    public String getCodeLanguage() {
+        return codeLanguage;
+    }
+
+    public void setCodeLanguage(String codeLanguage) {
+        this.codeLanguage = codeLanguage;
+    }
 
     public String getLanguage() {
         return language;
@@ -23,12 +41,17 @@ public class Language {
 
         Language language1 = (Language) o;
 
+        if (codeLanguage != null ? !codeLanguage.equals(language1.codeLanguage) : language1.codeLanguage != null)
+            return false;
         return language != null ? language.equals(language1.language) : language1.language == null;
 
     }
 
     @Override
     public int hashCode() {
-        return language != null ? language.hashCode() : 0;
+        int result = codeLanguage != null ? codeLanguage.hashCode() : 0;
+        result = 31 * result + (language != null ? language.hashCode() : 0);
+        return result;
     }
 }
+

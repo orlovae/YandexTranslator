@@ -2,7 +2,6 @@ package com.example.alex.yandextranslator.adapter;
 
 import android.util.Log;
 
-import com.example.alex.yandextranslator.model.language.CodeLanguage;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.google.gson.JsonArray;
@@ -15,7 +14,7 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,23 +38,21 @@ public class LanguageDictionareAdapter implements JsonDeserializer<LanguageDicti
             listDirs.add(dir.getAsString());
         }
 
-        HashMap<CodeLanguage, Language> hashMapLanguageDictionare = new HashMap<>();
+        ArrayList<Language> listLanguage = new ArrayList<>();
 
         JsonObject jsonObjectLang = jsonObject.get("langs").getAsJsonObject();
 
         for (Map.Entry<String, JsonElement> entry:jsonObjectLang.entrySet()
              ) {
-            CodeLanguage codeLanguageKey = new CodeLanguage();
-            codeLanguageKey.setCodeLanguage(entry.getKey());
-            Log.d(LOG_TAG, "key = " + codeLanguageKey.getCodeLanguage());
+            String codeLanguage = entry.getKey();
 
-            Language languageValue = new Language();
             String valueTmp = entry.getValue().toString();
-            String value = valueTmp.substring(1, valueTmp.length()-1);
-            Log.d(LOG_TAG, "value = " + value);
-            languageValue.setLanguage(value);
-            hashMapLanguageDictionare.put(codeLanguageKey, languageValue);
+            String stringLanguage = valueTmp.substring(1, valueTmp.length()-1);
+
+            Language language = new Language(codeLanguage, stringLanguage);
+
+            listLanguage.add(language);
         }
-        return new LanguageDictionare(listDirs, hashMapLanguageDictionare);
+        return new LanguageDictionare(listDirs, listLanguage);
     }
 }

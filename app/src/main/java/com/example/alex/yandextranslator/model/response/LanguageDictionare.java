@@ -1,10 +1,8 @@
 package com.example.alex.yandextranslator.model.response;
 
-import com.example.alex.yandextranslator.model.language.CodeLanguage;
 import com.example.alex.yandextranslator.model.language.Language;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by alex on 12.04.17.
@@ -13,12 +11,11 @@ import java.util.HashMap;
 public class LanguageDictionare {
 
     private ArrayList<String> listDirs;
-    private HashMap <CodeLanguage, Language> hashMapLanguageDictionare;
+    private ArrayList<Language> listLanguage;
 
-    public LanguageDictionare(ArrayList<String> listDirs,
-                       HashMap<CodeLanguage, Language> hashMapLanguageDictionare) {
+    public LanguageDictionare(ArrayList<String> listDirs, ArrayList<Language> listLanguage) {
         this.listDirs = listDirs;
-        this.hashMapLanguageDictionare = hashMapLanguageDictionare;
+        this.listLanguage = listLanguage;
     }
 
     public ArrayList<String> getListDirs() {
@@ -29,11 +26,11 @@ public class LanguageDictionare {
         this.listDirs = listDirs;
     }
 
-    public HashMap<CodeLanguage, Language> getHashMapLanguageDictionare() {
-        return hashMapLanguageDictionare;
+    public ArrayList<Language> getListLanguage() {
+        return listLanguage;
     }
 
-    public void setHashMapLanguageDictionare(HashMap<CodeLanguage, Language> hashMapLanguageDictionare) {
-        this.hashMapLanguageDictionare = hashMapLanguageDictionare;
+    public void setListLanguage(ArrayList<Language> listLanguage) {
+        this.listLanguage = listLanguage;
     }
 }
