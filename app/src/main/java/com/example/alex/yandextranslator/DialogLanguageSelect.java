@@ -35,7 +35,7 @@ public class DialogLanguageSelect extends DialogFragment {
     private String languageSelectFromDialog;
 
     public interface DialogLanguageSelectListener {
-        public void onDialogItemClick(DialogFragment dialog, String languageSelectFromDialog);
+        void onDialogItemClick(String languageSelectFromDialog);
     }
 
     DialogLanguageSelectListener listener;
@@ -74,7 +74,7 @@ public class DialogLanguageSelect extends DialogFragment {
         public void onClick(DialogInterface dialog, int which) {
             languageSelectFromDialog = languages[which];
             Log.d(LOG_TAG, "languageSelectFromDialog = " + languageSelectFromDialog);
-            listener.onDialogItemClick(DialogLanguageSelect.this, languageSelectFromDialog);
+            listener.onDialogItemClick(languageSelectFromDialog);
         }
     };
 

@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onDialogItemClick(DialogFragment dialog, String languageSelectFromDialog) {
+    public void onDialogItemClick(String languageSelectFromDialog) {
         Log.d(LOG_TAG, "languageSelectFromDialog = " + languageSelectFromDialog);
     }
 }
