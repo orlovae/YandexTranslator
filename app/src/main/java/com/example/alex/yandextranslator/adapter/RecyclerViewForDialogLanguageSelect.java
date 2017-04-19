@@ -54,10 +54,10 @@ public class RecyclerViewForDialogLanguageSelect extends
                 holder.textViewChecked.setBackgroundResource(R.color.colorGrey);
                 holder.textViewChecked.setVisibility(View.VISIBLE);
 
-                Intent intent = new Intent();
-                intent.putExtra("languageSelect",languages[position]);
-
-                context.startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.putExtra("languageSelect",languages[position]);
+//
+//                context.startActivity(intent);
             }
         });
 

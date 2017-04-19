@@ -39,7 +39,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
-        LoaderManager.LoaderCallbacks<Cursor>{
+        DialogLanguageSelect.DialogLanguageSelectListener, LoaderManager.LoaderCallbacks<Cursor>{
     private final String LOG_TAG = this.getClass().getSimpleName();
 
     private TextView textViewTranslate;
@@ -136,22 +136,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 reversTextViewLanguageSelect();
                 break;
             case R.id.text_view_language_text:
-                startDialogSelectLanguage(dialogFragmentSelectLanguageText, textViewLanguageText);
+                startDialogSelectLanguage(textViewLanguageText);
                 break;
             case R.id.text_view_language_translator:
-                startDialogSelectLanguage(dialogFragmentSelectTranslator,
-                        textViewLanguageTranslation);
+                startDialogSelectLanguage(textViewLanguageTranslation);
                 break;
         }
     }
 
-    private void startDialogSelectLanguage(DialogFragment dialogLanguageSelect, TextView textView){
+    private void startDialogSelectLanguage(TextView textView){
         String[] language = getStringLanguage();
         Bundle args = new Bundle();
         args.putStringArray("language", language);
         args.putString("languageSelect", textView.getText().toString());
 
-        dialogLanguageSelect = new DialogLanguageSelect();
+        DialogFragment dialogLanguageSelect = new DialogLanguageSelect();
         dialogLanguageSelect.setArguments(args);
         dialogLanguageSelect.show(getFragmentManager(), "dialog1");
     }
@@ -390,5 +389,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void onDialogItemClick(DialogFragment dialog, String languageSelectFromDialog) {
+        Log.d(LOG_TAG, "languageSelectFromDialog = " + languageSelectFromDialog);
     }
 }
