@@ -54,32 +54,4 @@ public class CursorToMapLanguageAdapter {
         }
         return listLanguage;
     }
-
-    public String[] getStringArayLanguageToCursor(){
-        Log.d(LOG_TAG, "Start getStringLanguageToCursor");
-        String language;
-
-        if (listStringLanguage == null) {
-            listStringLanguage = new ArrayList<>();
-        } else {
-            listStringLanguage.clear();
-        }
-
-        try {
-            if (cursor != null && cursor.moveToFirst()){
-                int languageColIndex = cursor.getColumnIndex(COLUMN_LANGUAGE);
-                do {
-                    language = cursor.getString(languageColIndex);
-                    Log.d(LOG_TAG, "language = " + language);
-                    listStringLanguage.add(language);
-                } while (cursor.moveToNext());
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) cursor.close();
-        }
-        return listStringLanguage.toArray(new String[listStringLanguage.size()]);
-    }
 }

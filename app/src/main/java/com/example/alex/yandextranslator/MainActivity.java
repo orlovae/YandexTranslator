@@ -32,6 +32,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -47,12 +48,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editText;
     private Button button;
 
-    private DialogFragment dialogFragmentSelectLanguageText, dialogFragmentSelectTranslator;
+    private DialogLanguageSelect dialogFragmentSelectLanguageText, dialogFragmentSelectTranslator;
 
     private ApiTranslator apiTranslator;
     private ApiLanguageDetection apiLanguageDetection;
     private ApiDictionare apiDictionare;
 
+    private ArrayList<Language> listLanguage;
     private ArrayList<Language> listLanguageText, listLanguageTranslation;
 
     private Map<String, String> mapJson;
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        Log.d(LOG_TAG, "Start onClick");
         switch (v.getId()) {
             case R.id.button:
+
                 String textToYandex = getEditText(editText);
 //                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
 
@@ -136,31 +139,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 reversTextViewLanguageSelect();
                 break;
             case R.id.text_view_language_text:
-                startDialogSelectLanguage(textViewLanguageText);
+                responseLanguageDictionare();
+                prepareBundleForDialogSelectLanguage(textViewLanguageText);
+
+                dialogFragmentSelectLanguageText  = new DialogLanguageSelect();
+                dialogFragmentSelectLanguageText.
+                        setArguments(prepareBundleForDialogSelectLanguage(textViewLanguageText));
+                dialogFragmentSelectLanguageText.show(getFragmentManager(), "dialog1");
+
                 break;
             case R.id.text_view_language_translator:
-                startDialogSelectLanguage(textViewLanguageTranslation);
+                responseLanguageDictionare();
+                prepareBundleForDialogSelectLanguage(textViewLanguageTranslation);
+
+                dialogFragmentSelectTranslator = new DialogLanguageSelect();
+                dialogFragmentSelectTranslator.
+                        setArguments(prepareBundleForDialogSelectLanguage(textViewLanguageTranslation));
+                dialogFragmentSelectTranslator.show(getFragmentManager(), "dialog2");
+
                 break;
         }
     }
 
-    private void startDialogSelectLanguage(TextView textView){
-        String[] language = getStringLanguage();
+    private Bundle prepareBundleForDialogSelectLanguage(TextView textView){
+        String[] language = convertArrayList(listLanguage);
         Bundle args = new Bundle();
         args.putStringArray("language", language);
+        Log.d(LOG_TAG, "languages = " + language.length);
         args.putString("languageSelect", textView.getText().toString());
+        args.putInt("idTextView", textView.getId());
 
-        DialogFragment dialogLanguageSelect = new DialogLanguageSelect();
-        dialogLanguageSelect.setArguments(args);
-        dialogLanguageSelect.show(getFragmentManager(), "dialog1");
+        return args;
+    }
+
+    private String[] convertArrayList (ArrayList<Language> list) {
+        ArrayList<String> stringArrayList = new ArrayList<>();
+        for (Language item : list){
+            String newItem = item.getLanguage();
+            stringArrayList.add(newItem);
+        }
+        return stringArrayList.toArray(new String[stringArrayList.size()]);
     }
 
     private String setLang(){
-        String languageText = listLanguageText.get(0).getCodeLanguage();
-        String languageTranslator = listLanguageTranslation.get(0).getCodeLanguage();
+        String languageText = getCodeLanguage(textViewLanguageText.getText().toString());
+        String languageTranslator = getCodeLanguage(textViewLanguageTranslation.getText().toString());
         String lang = languageText + "-" + languageTranslator;
 
         return lang;
+    }
+
+    private String getCodeLanguage(String language){
+        for (Language item : listLanguage){
+            String l = item.getLanguage();
+            if (l.equals(language)){
+                return item.getCodeLanguage();
+            }
+        }
+        return "";//TODO написать обработку ошибки
     }
 
     private void reversTextViewLanguageSelect(){
@@ -235,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         response.body().toString();
                         LanguageDictionare languageDictionare = response.body();
                         initDataBase(languageDictionare);
-                        Log.d(LOG_TAG, "mapLanguage = " + languageDictionare);
+                        Log.d(LOG_TAG, "listLanguage = " + languageDictionare.getListLanguage().size());
                     } else {
                         error();
                     }
@@ -318,14 +354,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return cursorToMapLanguageAdapter.getListToCursor();
     }
 
-    private String[] getStringLanguage(){
-        Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
-                null, null, null, null);
-        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
-
-        return cursorToMapLanguageAdapter.getStringArayLanguageToCursor();
-    }
-
     private String getEditText(EditText editText){
         String text = editText.getText().toString();
         if (text.length() == 0) text = "";
@@ -352,6 +380,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!listLanguageFromResponse.equals(listLanguageFromCursor)){
             getContentResolver().delete(Contract.Language.CONTENT_URI, null, null);
             createNewLanguageTable(listLanguageFromResponse);
+        }
+        initListLanguage(languageDictionare);
+    }
+
+    private void initListLanguage(LanguageDictionare languageDictionare){
+        if (listLanguage == null){
+            listLanguage = languageDictionare.getListLanguage();
+        } else {
+            listLanguage.clear();
+            listLanguage = languageDictionare.getListLanguage();
         }
     }
 
@@ -392,7 +430,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onDialogItemClick(String languageSelectFromDialog) {
-        Log.d(LOG_TAG, "languageSelectFromDialog = " + languageSelectFromDialog);
+    public void onDialogItemClick(String languageSelectFromDialog, int idTextView) {
+        switch (idTextView) {
+            case R.id.text_view_language_text:
+                textViewLanguageText.setText(languageSelectFromDialog);
+                break;
+            case R.id.text_view_language_translator:
+                textViewLanguageTranslation.setText(languageSelectFromDialog);
+                break;
+        }
     }
 }
