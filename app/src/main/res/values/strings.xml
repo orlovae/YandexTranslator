@@ -2,7 +2,4 @@
     <string name="app_name">YandexTranslator</string>
     <string name="error_invalid_responce">invalid response from the server</string>
     <string name="revers">&lt;-&gt;</string>
-    <string name="back">&lt;-</string>
-    <string name="language_text">Язык перевода</string>
-    <string name="checked">&#10004;</string>
 </resources>
