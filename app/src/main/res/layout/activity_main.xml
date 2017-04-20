@@ -6,48 +6,11 @@
     android:orientation="vertical"
     tools:context="com.example.alex.yandextranslator.MainActivity">
 
-    <LinearLayout
+    <fragment
+        android:id="@+id/tabs_fragment"
+        android:name="com.example.alex.yandextranslator.Fragment.TabsFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/text_view_language_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.45"
-            android:gravity="right" />
-
-        <TextView
-            android:id="@+id/text_view_revers"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"
-            android:gravity="center"/>
-
-        <TextView
-            android:id="@+id/text_view_language_translator"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.45"
-            android:gravity="left" />
-
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Перевести"/>
-
-    <TextView
-        android:id="@+id/text_view_translate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+    </fragment>
 
 </LinearLayout>

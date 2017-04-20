@@ -2,4 +2,7 @@
     <string name="app_name">YandexTranslator</string>
     <string name="error_invalid_responce">invalid response from the server</string>
     <string name="revers">&lt;-&gt;</string>
+    <string name="tab_translator">Translator</string>
+    <string name="tab_history">History</string>
+    <string name="tab_favorites">Favorites</string>
 </resources>
