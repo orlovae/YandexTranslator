@@ -1,8 +1,9 @@
 package com.example.alex.yandextranslator;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -29,10 +30,12 @@ public class DialogLanguageSelect extends DialogFragment {
     DialogLanguageSelectListener listener;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        Log.d(LOG_TAG, "Start onAttach = ");
+        super.onAttach(context);
         try {
-            listener = (DialogLanguageSelectListener)getActivity();
+            listener = (DialogLanguageSelectListener)getDialog();
+            Log.d(LOG_TAG, "listener = " + listener.toString());
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString());
         }
