@@ -1,6 +1,8 @@
 package com.example.alex.yandextranslator.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,14 +21,17 @@ import com.example.alex.yandextranslator.model.language.Language;
 
 import java.util.ArrayList;
 
+import static com.example.alex.yandextranslator.DialogLanguageSelect.ID_TEXTVIEW_CALL;
+import static com.example.alex.yandextranslator.DialogLanguageSelect.LANGUAGE_FROM_DIALOG_SELECTED;
+
 /**
  * Created by alex on 20.04.17.
  */
 
-public class TabFragmentTranslator extends Fragment implements View.OnClickListener,
-        DialogLanguageSelect.DialogLanguageSelectListener{
+public class TabFragmentTranslator extends Fragment implements View.OnClickListener{
 
     private final String LOG_TAG = this.getClass().getSimpleName();
+    public static final int CHANGE_DATE = 1;
 
     private TextView textViewTranslate;
     private TextView textViewLanguageText, textViewRevers, textViewLanguageTranslation;
@@ -81,24 +86,25 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-//        Log.d(LOG_TAG, "Start onClick");
+        Log.d(LOG_TAG, "Start onClick");
         switch (v.getId()) {
             case R.id.button:
 
                 String textToYandex = getEditText(editText);
 //                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
 
-                app.createMapJson(textToYandex, "languageDetection");
-
-                app.responseLanguageDetection();
+//                app.createMapJson(textToYandex, "languageDetection");
+//
+//                app.responseLanguageDetection();
 
                 String[] codeLanguageToRequest  = getcodeLanguageToRequest();
                 app.setCodeLangToRequest(codeLanguageToRequest);
-//                Log.d(LOG_TAG, "lang = " + lang);
 
                 app.createMapJson(textToYandex, "translator");
 
                 app.responseTranslator();
+
+                Log.d(LOG_TAG, "translation = " + app.getResponseTranslator());
 
                 textViewTranslate.setText(app.getResponseTranslator());
 
@@ -112,7 +118,9 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 DialogLanguageSelect dialogFragmentSelectLanguageText = new DialogLanguageSelect();
                 dialogFragmentSelectLanguageText.
                         setArguments(prepareBundleForDialogSelectLanguage(textViewLanguageText));
-                dialogFragmentSelectLanguageText.show(getFragmentManager(), "dialog1");
+                dialogFragmentSelectLanguageText.setTargetFragment(this, CHANGE_DATE);
+                dialogFragmentSelectLanguageText.show(getFragmentManager(),
+                        dialogFragmentSelectLanguageText.getClass().getName());
 
                 break;
             case R.id.text_view_language_translator:
@@ -121,7 +129,9 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 DialogLanguageSelect dialogFragmentSelectTranslator = new DialogLanguageSelect();
                 dialogFragmentSelectTranslator.
                         setArguments(prepareBundleForDialogSelectLanguage(textViewLanguageTranslation));
-                dialogFragmentSelectTranslator.show(getFragmentManager(), "dialog2");
+                dialogFragmentSelectTranslator.setTargetFragment(this, CHANGE_DATE);
+                dialogFragmentSelectTranslator.show(getFragmentManager(),
+                        dialogFragmentSelectTranslator.getClass().getName());
 
                 break;
         }
@@ -159,13 +169,22 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void onDialogItemClick(String languageSelectFromDialog, int idTextView) {
-        switch (idTextView) {
-            case R.id.text_view_language_text:
-                textViewLanguageText.setText(languageSelectFromDialog);
-                break;
-            case R.id.text_view_language_translator:
-                textViewLanguageTranslation.setText(languageSelectFromDialog);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (data == null || resultCode != Activity.RESULT_OK) return;
+
+        switch (requestCode) {
+            case CHANGE_DATE:
+                String languageSelectFromDialog = data.getStringExtra(LANGUAGE_FROM_DIALOG_SELECTED);
+                int idTextView = data.getIntExtra(ID_TEXTVIEW_CALL, -1); //TODO -1 ошибка передачи
+
+                if (idTextView == R.id.text_view_language_text) {
+                    textViewLanguageText.setText(languageSelectFromDialog);
+                } else {
+                    textViewLanguageTranslation.setText(languageSelectFromDialog);
+                }
+
                 break;
         }
     }

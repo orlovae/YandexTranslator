@@ -184,6 +184,7 @@ public class App extends Application {
     }
 
     public void responseTranslator() {
+        Log.d(LOG_TAG, "Start responseTranslator");
         Call<Translator> call = apiTranslator.translate(mapJson);
 
         call.enqueue(new Callback<Translator>() {
@@ -191,18 +192,21 @@ public class App extends Application {
             public void onResponse(Call<Translator> call, Response<Translator> response) {
                 try {
                     if (response.isSuccessful()){
+                        Log.d(LOG_TAG, "responseTranslator " + response.body().getText().toString());
                         responseTranslator = response.body().getText().toString();
                     } else {
                         responseTranslator = getString(R.string.error_invalid_responce);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(LOG_TAG, "exeption onResponce " + e.toString());
                     //TODO написать обработку ошибок
                 }
             }
             @Override
             public void onFailure(Call<Translator> call, Throwable t) {
                 t.printStackTrace();
+                Log.d(LOG_TAG, "exeption onFailure " + t.toString());
                 //TODO написать обработку ошибок
             }
         });
