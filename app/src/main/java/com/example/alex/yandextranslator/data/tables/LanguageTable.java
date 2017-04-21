@@ -1,6 +1,5 @@
 package com.example.alex.yandextranslator.data.tables;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
 /**

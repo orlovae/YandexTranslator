@@ -26,25 +26,45 @@ public final class Contract {
         public static final String COLUMN_CODE_LANGUAGE = "codeLanguage";
         public static final String COLUMN_LANGUAGE = "language";
 
-        public static final String PATH = TABLE_NAME; //TODO для работы с разными таблицами
+        public static final String PATH_LANGUAGE = TABLE_NAME;
 
         // Общий Uri
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH);
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_LANGUAGE);
 
         // Типы данных
         // набор строк //TODO пересмотреть урок, уточнить что это за хрень
-        public static final String TYPE_ALL_ROW =
+        public static final String TYPE_LANGUAGE_ALL_ROW =
                 ContentResolver.CURSOR_DIR_BASE_TYPE +
                         "/" + AUTHORITY + "/" + TABLE_NAME;
 
         // одна строка
-        public static final String TYPE_SINGLE_ROW =
+        public static final String TYPE_LANGUAGE_SINGLE_ROW =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE +
                         "/" + AUTHORITY + "/" + TABLE_NAME;
+    }
 
+    public static final class HistoryFavorites implements BaseColumns {
+        public static final String TABLE_NAME = "HistoryFavorites";
+        public static final int TABLE_VERSION = 1;
+        public static final String COLUMN_ID = BaseColumns._ID;
+        public static final String COLUMN_TRANSLATABLE_TEXT = "translatable text";
+        public static final String COLUMN_TRANSLATED_TEXT = "translated text";
+        public static final String COLUMN_TRANSLATION_DIRECTION = "translation direction";
+        public static final boolean CULUMN_FAVORITE = false;
 
+        public static final String PATH_HISTORY_FAVORITES = TABLE_NAME;
 
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI,
+                PATH_HISTORY_FAVORITES);
 
+        public static final String TYPE_HISTORY_FAVORITES_ALL_ROW =
+                ContentResolver.CURSOR_DIR_BASE_TYPE +
+                        "/" + AUTHORITY + "/" + TABLE_NAME;
+
+        // одна строка
+        public static final String TYPE_HISTORY_FAVORITES_SINGLE_ROW =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE +
+                        "/" + AUTHORITY + "/" + TABLE_NAME;
     }
 
 }
