@@ -21,8 +21,6 @@ import static com.example.alex.yandextranslator.data.Contract.HistoryFavorites.P
 import static com.example.alex.yandextranslator.data.Contract.HistoryFavorites.TYPE_HISTORY_FAVORITES_ALL_ROW;
 import static com.example.alex.yandextranslator.data.Contract.HistoryFavorites.TYPE_HISTORY_FAVORITES_SINGLE_ROW;
 import static com.example.alex.yandextranslator.data.Contract.Language.PATH_LANGUAGE;
-import static com.example.alex.yandextranslator.data.Contract.Language.COLUMN_ID;
-import static com.example.alex.yandextranslator.data.Contract.Language.TABLE_NAME;
 import static com.example.alex.yandextranslator.data.Contract.Language.TYPE_LANGUAGE_ALL_ROW;
 import static com.example.alex.yandextranslator.data.Contract.Language.TYPE_LANGUAGE_SINGLE_ROW;
 
@@ -33,18 +31,12 @@ import static com.example.alex.yandextranslator.data.Contract.Language.TYPE_LANG
 public class YandexTranslatorProvider extends ContentProvider {
     private final String LOG_TAG = YandexTranslatorProvider.class.getSimpleName();
 
-    //// UriMatcher
-    // общий Uri
     private static final int URI_MATCHER_LANGUAGE_ALL_ROWS = 1000;
-
-    private static final int URI_MATCHER_HISTORY_FAVORITES_ALL_ROWS = 2000;
-
-    // Uri с указанным ID
     private static final int URI_MATCHER_LANGUAGE_SINGLE_ROW = 1001;
 
+    private static final int URI_MATCHER_HISTORY_FAVORITES_ALL_ROWS = 2000;
     private static final int URI_MATCHER_HISTORY_FAVORITES_SINGLE_ROW = 2001;
 
-    // описание и создание UriMatcher
     private static final UriMatcher uriMatcher;
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -53,7 +45,6 @@ public class YandexTranslatorProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, PATH_LANGUAGE + "/#", URI_MATCHER_LANGUAGE_SINGLE_ROW);
         uriMatcher.addURI(AUTHORITY, PATH_HISTORY_FAVORITES + "/#",
                 URI_MATCHER_HISTORY_FAVORITES_SINGLE_ROW);
-
     }
 
     private DBHelper dbHelper;
@@ -80,6 +71,8 @@ public class YandexTranslatorProvider extends ContentProvider {
                         @Nullable String selection, @Nullable String[] selectionArgs,
                         @Nullable String sortOrder) {
 //        Log.d(LOG_TAG, "Start query");
+
+        String rowIdLanguage, rowIdHistoryFavorites;
         String table_name = "";
 
         openDatabase();
@@ -95,20 +88,22 @@ public class YandexTranslatorProvider extends ContentProvider {
                 break;
             case URI_MATCHER_LANGUAGE_SINGLE_ROW:
                 table_name = Contract.Language.TABLE_NAME;
-                String rowIdLanguage = uri.getLastPathSegment();
+                rowIdLanguage = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     selection = Contract.Language.COLUMN_ID + " = " + rowIdLanguage;
                 } else {
-                    selection = selection + " AND " + COLUMN_ID + " = " + rowIdLanguage;
+                    selection = selection + " AND " + Contract.Language.COLUMN_ID + " = " +
+                            rowIdLanguage;
                 }
                 break;
             case URI_MATCHER_HISTORY_FAVORITES_SINGLE_ROW:
                 table_name = Contract.HistoryFavorites.TABLE_NAME;
-                String rowIdHistoryFavorites = uri.getLastPathSegment();
+                rowIdHistoryFavorites = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     selection = Contract.HistoryFavorites.COLUMN_ID + " = " + rowIdHistoryFavorites;
                 } else {
-                    selection = selection + " AND " + COLUMN_ID + " = " + rowIdHistoryFavorites;
+                    selection = selection + " AND " + Contract.HistoryFavorites.COLUMN_ID + " = " +
+                            rowIdHistoryFavorites;
                 }
                 break;
             default:
@@ -158,8 +153,7 @@ public class YandexTranslatorProvider extends ContentProvider {
 //        if (uriMatcher.match(uri) != URI_MATCHER_LANGUAGE_SINGLE_ROW) { //проверка, если вставка больше чем 1 элемент -> ошибка
 //            throwIllegalArgumentException(uri);
 //        }
-        long rowIDLanguage;
-        long rowIDHistoryFavorites;
+        long rowIDLanguage, rowIDHistoryFavorites;
 
         String table_name = "";
 
@@ -196,11 +190,9 @@ public class YandexTranslatorProvider extends ContentProvider {
 //        Log.d(LOG_TAG, "Start delete");
 //        Log.d(LOG_TAG, "delete uriMatcher.match(uri) = " + uriMatcher.match(uri));
 
-        long rowIDLanguage;
-        long rowIDHistoryFavorites;
+        String rowIDLanguage, rowIDHistoryFavorites;
 
-        int countRowsDeleteLanguage;
-        int countRowsDeleteHistoryFavorites;
+        int countRowsDelete = -1;
 
         String table_name = "";
 
@@ -209,24 +201,38 @@ public class YandexTranslatorProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case URI_MATCHER_LANGUAGE_ALL_ROWS:
                 table_name = Contract.Language.TABLE_NAME;
-                database.delete(table_name, null, null);
+                countRowsDelete = database.delete(table_name, null, null);
                 break;
             case URI_MATCHER_HISTORY_FAVORITES_ALL_ROWS:
                 table_name = Contract.HistoryFavorites.TABLE_NAME;
-                database.delete(table_name,null, null);
+                countRowsDelete = database.delete(table_name,null, null);
+                break;
             case URI_MATCHER_LANGUAGE_SINGLE_ROW:
-                String rowId = uri.getLastPathSegment();
+                table_name = Contract.Language.TABLE_NAME;
+                rowIDLanguage = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = COLUMN_ID + " = " + rowId;
+                    selection = Contract.Language.COLUMN_ID + " = " + rowIDLanguage;
                 } else {
-                    selection = selection + " AND " + COLUMN_ID + " = " + rowId;
+                    selection = selection + " AND " + Contract.Language.COLUMN_ID + " = " +
+                            rowIDLanguage;
                 }
+                countRowsDelete = database.delete(table_name, selection, selectionArgs);
+                break;
+            case URI_MATCHER_HISTORY_FAVORITES_SINGLE_ROW:
+                table_name = Contract.Language.TABLE_NAME;
+                rowIDHistoryFavorites = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    selection = Contract.HistoryFavorites.COLUMN_ID + " = " + rowIDHistoryFavorites;
+                } else {
+                    selection = selection + " AND " + Contract.HistoryFavorites.COLUMN_ID + " = " +
+                            rowIDHistoryFavorites;
+                }
+                countRowsDelete = database.delete(table_name, selection, selectionArgs);
                 break;
             default:
                 throwIllegalArgumentException(uri);
         }
 
-        int countRowsDelete = database.delete(TABLE_NAME, selection, selectionArgs);
         try {
             getContext().getContentResolver().notifyChange(uri, null);
         } catch (NullPointerException e) {
@@ -241,8 +247,12 @@ public class YandexTranslatorProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        Log.d(LOG_TAG, "Start delete");
-        Log.d(LOG_TAG, "query, " + uri.toString());
+//        Log.d(LOG_TAG, "Start delete");
+//        Log.d(LOG_TAG, "query, " + uri.toString());
+        String rowIDLanguage, rowIDHistoryFavorites;
+
+        String table_name = "";
+
 
         openDatabase();
 
@@ -250,19 +260,35 @@ public class YandexTranslatorProvider extends ContentProvider {
             case URI_MATCHER_LANGUAGE_ALL_ROWS:
 
                 break;
+            case URI_MATCHER_HISTORY_FAVORITES_ALL_ROWS:
+
+                break;
             case URI_MATCHER_LANGUAGE_SINGLE_ROW:
-                String rowId = uri.getLastPathSegment();
+                table_name = Contract.Language.TABLE_NAME;
+                rowIDLanguage = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = COLUMN_ID + " = " + rowId;
+                    selection = Contract.Language.COLUMN_ID + " = " + rowIDLanguage;
                 } else {
-                    selection = selection + " AND " + COLUMN_ID + " = " + rowId;
+                    selection = selection + " AND " + Contract.Language.COLUMN_ID + " = " +
+                            rowIDLanguage;
+                }
+                break;
+            case URI_MATCHER_HISTORY_FAVORITES_SINGLE_ROW:
+                table_name =Contract.HistoryFavorites.TABLE_NAME;
+                rowIDHistoryFavorites = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    selection = Contract.HistoryFavorites.COLUMN_ID + " = " +
+                            rowIDHistoryFavorites;
+                } else {
+                    selection = selection + " AND " + Contract.HistoryFavorites.COLUMN_ID +
+                            " = " + rowIDHistoryFavorites;
                 }
                 break;
             default:
                 throwIllegalArgumentException(uri);
         }
 
-        int countRowsUpdate = database.update(TABLE_NAME, values, selection, selectionArgs);
+        int countRowsUpdate = database.update(table_name, values, selection, selectionArgs);
         try {
             getContext().getContentResolver().notifyChange(uri, null);
         } catch (NullPointerException e) {

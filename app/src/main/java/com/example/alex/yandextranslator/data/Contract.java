@@ -21,7 +21,6 @@ public final class Contract {
     // path
     public static final class Language implements BaseColumns {
         public static final String TABLE_NAME = "Language";
-        public static final int TABLE_VERSION = 1;
         public static final String COLUMN_ID = BaseColumns._ID;
         public static final String COLUMN_CODE_LANGUAGE = "codeLanguage";
         public static final String COLUMN_LANGUAGE = "language";
@@ -45,7 +44,6 @@ public final class Contract {
 
     public static final class HistoryFavorites implements BaseColumns {
         public static final String TABLE_NAME = "HistoryFavorites";
-        public static final int TABLE_VERSION = 1;
         public static final String COLUMN_ID = BaseColumns._ID;
         public static final String COLUMN_TRANSLATABLE_TEXT = "translatable text";
         public static final String COLUMN_TRANSLATED_TEXT = "translated text";
