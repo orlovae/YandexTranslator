@@ -1,8 +1,8 @@
 package com.example.alex.yandextranslator;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -34,7 +34,7 @@ public class DialogLanguageSelect extends DialogFragment {
         Log.d(LOG_TAG, "Start onAttach = ");
         super.onAttach(context);
         try {
-            listener = (DialogLanguageSelectListener)getDialog();
+            listener = (DialogLanguageSelectListener)getActivity();
             Log.d(LOG_TAG, "listener = " + listener.toString());
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString());

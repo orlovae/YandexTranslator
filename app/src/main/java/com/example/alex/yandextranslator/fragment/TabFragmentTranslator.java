@@ -1,11 +1,9 @@
 package com.example.alex.yandextranslator.fragment;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,14 +109,10 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
             case R.id.text_view_language_text:
                 app.responseLanguageDictionare();
 
-                FragmentTransaction fragmentTransaction =
                 DialogLanguageSelect dialogFragmentSelectLanguageText = new DialogLanguageSelect();
                 dialogFragmentSelectLanguageText.
                         setArguments(prepareBundleForDialogSelectLanguage(textViewLanguageText));
-                fragmentManager.beginTransaction()
-                        .add()
-                        .commit();
-
+                dialogFragmentSelectLanguageText.show(getFragmentManager(), "dialog1");
 
                 break;
             case R.id.text_view_language_translator:
