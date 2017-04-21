@@ -1,4 +1,4 @@
-package com.example.alex.yandextranslator.Fragment;
+package com.example.alex.yandextranslator.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,7 +27,6 @@ public class TabsFragment extends Fragment {
         View view = inflater.inflate(R.layout.tabs_fragment_layout, container, false);
 
         initViews(view);
-
         setTabs();
 
         return view;
@@ -53,5 +52,4 @@ public class TabsFragment extends Fragment {
                 new TabItem(fragmentFavorites, nameTabFavorites)
         ).Build();
     }
-
 }

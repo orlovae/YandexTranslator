@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/tabs_fragment"
-        android:name="com.example.alex.yandextranslator.Fragment.TabsFragment"
+        android:name="com.example.alex.yandextranslator.fragment.TabsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </fragment>

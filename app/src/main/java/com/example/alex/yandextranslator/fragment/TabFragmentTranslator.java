@@ -1,5 +1,7 @@
-package com.example.alex.yandextranslator.Fragment;
+package com.example.alex.yandextranslator.fragment;
 
+import android.app.Application;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.alex.yandextranslator.App;
 import com.example.alex.yandextranslator.DialogLanguageSelect;
 import com.example.alex.yandextranslator.R;
 import com.example.alex.yandextranslator.adapter.CursorToMapLanguageAdapter;
@@ -57,8 +60,15 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
     private Gson gson;
 
+//    private App app;
+
     private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
 
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        app = ((App)getActivity().getApplicationContext());
+//    }
 
     @Nullable
     @Override

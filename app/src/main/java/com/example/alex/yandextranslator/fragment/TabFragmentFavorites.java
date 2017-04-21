@@ -1,4 +1,4 @@
-package com.example.alex.yandextranslator.Fragment;
+package com.example.alex.yandextranslator.fragment;
 
 import android.support.v4.app.Fragment;
 
