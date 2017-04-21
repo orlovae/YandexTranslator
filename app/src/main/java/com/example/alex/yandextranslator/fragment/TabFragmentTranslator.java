@@ -18,8 +18,15 @@ import com.example.alex.yandextranslator.App;
 import com.example.alex.yandextranslator.DialogLanguageSelect;
 import com.example.alex.yandextranslator.R;
 import com.example.alex.yandextranslator.model.language.Language;
+import com.example.alex.yandextranslator.model.response.Translator;
+import com.example.alex.yandextranslator.rest.ApiTranslator;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.alex.yandextranslator.DialogLanguageSelect.ID_TEXTVIEW_CALL;
 import static com.example.alex.yandextranslator.DialogLanguageSelect.LANGUAGE_FROM_DIALOG_SELECTED;
@@ -73,6 +80,8 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     private void setIntiTextViewSelectLanguage(){
         ArrayList<Language> listLanguageText = app.getListLanguage("en");
         ArrayList<Language> listLanguageTranslation = app.getListLanguage("ru");
+        Log.d(LOG_TAG, "listLanguageText size = " + listLanguageText.size() +
+                " listLanguageTranslation size = " + listLanguageTranslation.size());
         textViewLanguageText.setText(listLanguageText.get(0).getLanguage());
         textViewLanguageTranslation.setText(listLanguageTranslation.get(0).getLanguage());
     }
@@ -100,13 +109,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 String[] codeLanguageToRequest  = getcodeLanguageToRequest();
                 app.setCodeLangToRequest(codeLanguageToRequest);
 
-                app.createMapJson(textToYandex, "translator");
-
-                app.responseTranslator();
-
-                Log.d(LOG_TAG, "translation = " + app.getResponseTranslator());
-
-                textViewTranslate.setText(app.getResponseTranslator());
+                responseTranslator(app.createMapJson(textToYandex, "translator"));
 
                 break;
             case R.id.text_view_revers:
@@ -135,6 +138,39 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                 break;
         }
+    }
+
+    public void responseTranslator(Map<String, String> mapJson) {
+        Log.d(LOG_TAG, "Start responseTranslator");
+
+        ApiTranslator apiTranslator = app.getApiTranslator();
+
+        Call<Translator> call = apiTranslator.translate(mapJson);
+
+        call.enqueue(new Callback<Translator>() {
+            @Override
+            public void onResponse(Call<Translator> call, Response<Translator> response) {
+                try {
+                    String responseTranslator;
+                    if (response.isSuccessful()){
+                        responseTranslator = response.body().getText().toString();
+                    } else {
+                        responseTranslator = getString(R.string.error_invalid_responce);
+                    }
+                    textViewTranslate.setText(responseTranslator);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(LOG_TAG, "exeption onResponce " + e.toString());
+                    //TODO написать обработку ошибок
+                }
+            }
+            @Override
+            public void onFailure(Call<Translator> call, Throwable t) {
+                t.printStackTrace();
+                Log.d(LOG_TAG, "exeption onFailure " + t.toString());
+                //TODO написать обработку ошибок
+            }
+        });
     }
 
     private String[] getcodeLanguageToRequest(){

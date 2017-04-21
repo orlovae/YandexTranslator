@@ -42,7 +42,7 @@ public class App extends Application {
     private ArrayList<Language> listLanguage;
 
     private String[] codeLangToRequest;
-    private String responseTranslator;
+
 
     private Map<String, String> mapJson;
 
@@ -58,12 +58,8 @@ public class App extends Application {
         this.codeLangToRequest = codeLangToRequest;
     }
 
-    public String getResponseTranslator() {
-        return responseTranslator;
-    }
-
-    public void setResponseTranslator(String responseTranslator) {
-        this.responseTranslator = responseTranslator;
+    public ApiTranslator getApiTranslator() {
+        return apiTranslator;
     }
 
     @Override
@@ -84,7 +80,7 @@ public class App extends Application {
 
     }
 
-    public void createMapJson(String textToYandex, String key) {
+    public Map<String, String> createMapJson(String textToYandex, String key) {
         Log.d(LOG_TAG, "Start createMapJson");
         if (mapJson == null) {
             mapJson = new HashMap<>();
@@ -117,6 +113,7 @@ public class App extends Application {
 //                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
                 break;
         }
+        return mapJson;
     }
 
     private String setLang(String[] codeLanguageToRequest){
@@ -183,34 +180,7 @@ public class App extends Application {
         });
     }
 
-    public void responseTranslator() {
-        Log.d(LOG_TAG, "Start responseTranslator");
-        Call<Translator> call = apiTranslator.translate(mapJson);
 
-        call.enqueue(new Callback<Translator>() {
-            @Override
-            public void onResponse(Call<Translator> call, Response<Translator> response) {
-                try {
-                    if (response.isSuccessful()){
-                        Log.d(LOG_TAG, "responseTranslator " + response.body().getText().toString());
-                        responseTranslator = response.body().getText().toString();
-                    } else {
-                        responseTranslator = getString(R.string.error_invalid_responce);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d(LOG_TAG, "exeption onResponce " + e.toString());
-                    //TODO написать обработку ошибок
-                }
-            }
-            @Override
-            public void onFailure(Call<Translator> call, Throwable t) {
-                t.printStackTrace();
-                Log.d(LOG_TAG, "exeption onFailure " + t.toString());
-                //TODO написать обработку ошибок
-            }
-        });
-    }
 
     public void responseLanguageDictionare(){
         Log.d(LOG_TAG, "Start createRequestLanguageDictionare");
