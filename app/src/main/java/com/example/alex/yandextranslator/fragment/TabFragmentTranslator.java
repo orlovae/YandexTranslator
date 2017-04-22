@@ -1,6 +1,7 @@
 package com.example.alex.yandextranslator.fragment;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.example.alex.yandextranslator.App;
 import com.example.alex.yandextranslator.DialogLanguageSelect;
 import com.example.alex.yandextranslator.R;
+import com.example.alex.yandextranslator.data.Contract;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.example.alex.yandextranslator.model.response.Translator;
@@ -201,6 +203,10 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                     String responseTranslator;
                     if (response.isSuccessful()){
                         responseTranslator = response.body().getText().toString();
+                        String textTranslator = mapJson.get("text");
+                        String translationDirection = mapJson.get("lang");
+                        app.addToHistoryFavoritesTable(textTranslator, responseTranslator,
+                                translationDirection, 0);
                     } else {
                         responseTranslator = getString(R.string.error_invalid_responce);
                     }

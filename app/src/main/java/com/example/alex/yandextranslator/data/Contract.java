@@ -45,9 +45,9 @@ public final class Contract {
     public static final class HistoryFavorites implements BaseColumns {
         public static final String TABLE_NAME = "HistoryFavorites";
         public static final String COLUMN_ID = BaseColumns._ID;
-        public static final String COLUMN_TRANSLATABLE_TEXT = "translatable text";
-        public static final String COLUMN_TRANSLATED_TEXT = "translated text";
-        public static final String COLUMN_TRANSLATION_DIRECTION = "translation direction";
+        public static final String COLUMN_TRANSLATABLE_TEXT = "translatable";
+        public static final String COLUMN_TRANSLATED_TEXT = "translated";
+        public static final String COLUMN_TRANSLATION_DIRECTION = "translation_direction";
         public static final String COLUMN_FAVORITE = "favorites";
 
         public static final String PATH_HISTORY_FAVORITES = TABLE_NAME;

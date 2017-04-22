@@ -5,4 +5,5 @@
     <string name="tab_translator">Translator</string>
     <string name="tab_history">History</string>
     <string name="tab_favorites">Favorites</string>
+    <string name="search">seacrh in history</string>
 </resources>

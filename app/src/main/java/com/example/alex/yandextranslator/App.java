@@ -5,13 +5,13 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.example.alex.yandextranslator.adapter.CursorToMapLanguageAdapter;
+import com.example.alex.yandextranslator.adapter.CursorAdapter;
 import com.example.alex.yandextranslator.adapter.LanguageDictionareAdapter;
 import com.example.alex.yandextranslator.data.Contract;
+import com.example.alex.yandextranslator.model.HistoryFavorites;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDetection;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
-import com.example.alex.yandextranslator.model.response.Translator;
 import com.example.alex.yandextranslator.rest.ApiClient;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiLanguageDetection;
@@ -43,10 +43,11 @@ public class App extends Application {
 
     private String[] codeLangToRequest;
 
-
     private Map<String, String> mapJson;
 
     private Gson gson;
+
+    private CursorAdapter cursorAdapter;
 
     private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
 
@@ -74,11 +75,19 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
+        initCursorAdapter();
+
         initApiLanguageDictionare();
 
         initApiLanguageDetection();
 
         initApiTranslator();
+    }
+
+    private void initCursorAdapter(){
+        if (cursorAdapter == null) {
+            cursorAdapter = new CursorAdapter();
+        }
     }
 
     public Map<String, String> createMapJson(String textToYandex, String key) {
@@ -187,9 +196,9 @@ public class App extends Application {
         Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
                 null, null, null, null);
 
-        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
+//        CursorAdapter cursorAdapter = new CursorAdapter(cursor);
 
-        ArrayList<Language> listLanguageFromCursor = cursorToMapLanguageAdapter.getListToCursor();
+        ArrayList<Language> listLanguageFromCursor = cursorAdapter.getListToCursor(cursor);
         ArrayList<Language> listLanguageFromResponse = languageDictionare.getListLanguage();
 
         if (!listLanguageFromResponse.equals(listLanguageFromCursor)){
@@ -226,9 +235,9 @@ public class App extends Application {
 
         Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
                 null, selection, selectionArgs, null);
-        CursorToMapLanguageAdapter cursorToMapLanguageAdapter = new CursorToMapLanguageAdapter(cursor);
+//        CursorAdapter cursorAdapter = new CursorAdapter(cursor);
 
-        return cursorToMapLanguageAdapter.getListToCursor();
+        return cursorAdapter.getListToCursor(cursor);
     }
 
     public String[] convertArrayList() {
@@ -238,5 +247,39 @@ public class App extends Application {
             stringArrayList.add(newItem);
         }
         return stringArrayList.toArray(new String[stringArrayList.size()]);
+    }
+
+    public void addToHistoryFavoritesTable(String textTranslator, String responseTranslator,
+                                            String translationDirection, int favorites){
+        Log.d(LOG_TAG, "Start getcodeLanguageToRequest");
+        String prepareResponseTranslator = responseTranslator.substring(1,
+                responseTranslator.length()-1);
+        ContentValues cv = new ContentValues();
+        cv.put(Contract.HistoryFavorites.COLUMN_TRANSLATABLE_TEXT, textTranslator);
+        cv.put(Contract.HistoryFavorites.COLUMN_TRANSLATED_TEXT, prepareResponseTranslator);
+        cv.put(Contract.HistoryFavorites.COLUMN_TRANSLATION_DIRECTION, translationDirection);
+        cv.put(Contract.HistoryFavorites.COLUMN_FAVORITE, 0);
+
+        if (checkDuplicationInHistory(prepareResponseTranslator)){
+            getContentResolver().insert(Contract.HistoryFavorites.CONTENT_URI, cv);
+        }
+    }
+
+    private boolean checkDuplicationInHistory(String prepareResponseTranslator){
+        Log.d(LOG_TAG, "Start checkDuplicationInHistory");
+        String selection = Contract.HistoryFavorites.COLUMN_TRANSLATED_TEXT + "=?";
+        String[] selectionArgs = {prepareResponseTranslator};
+
+        Cursor cursor = getContentResolver().query(Contract.HistoryFavorites.CONTENT_URI,
+                null, selection, selectionArgs, null);
+
+        ArrayList<HistoryFavorites> historyFavorites = cursorAdapter.
+                getArrayListHistoryFavoritesToCursor(cursor);
+
+        if (historyFavorites.isEmpty()){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
