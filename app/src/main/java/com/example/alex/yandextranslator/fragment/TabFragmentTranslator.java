@@ -18,7 +18,9 @@ import com.example.alex.yandextranslator.App;
 import com.example.alex.yandextranslator.DialogLanguageSelect;
 import com.example.alex.yandextranslator.R;
 import com.example.alex.yandextranslator.model.language.Language;
+import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.example.alex.yandextranslator.model.response.Translator;
+import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiTranslator;
 
 import java.util.ArrayList;
@@ -36,7 +38,6 @@ import static com.example.alex.yandextranslator.DialogLanguageSelect.LANGUAGE_FR
  */
 
 public class TabFragmentTranslator extends Fragment implements View.OnClickListener{
-
     private final String LOG_TAG = this.getClass().getSimpleName();
     public static final int CHANGE_DATE = 1;
 
@@ -49,6 +50,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
     @Override
     public void onAttach(Context context) {
+        Log.d(LOG_TAG, "Start onAttach");
         super.onAttach(context);
         app = ((App)getActivity().getApplicationContext());
     }
@@ -57,7 +59,10 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "Start onCreateView");
         View view = inflater.inflate(R.layout.translator_tab_fragment_layout, container, false);
+
+        initDictionare();
 
         initView(view);
 
@@ -66,7 +71,49 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
         return view;
     }
 
+    private void initDictionare() {
+        Log.d(LOG_TAG, "Start initDictionare");
+        responseLanguageDictionare(app.createMapJson(null, "dictionare"));
+    }
+
+    public void responseLanguageDictionare(Map<String, String> mapJson){
+        Log.d(LOG_TAG, "Start responseLanguageDictionare");
+        ApiDictionare apiDictionare = app.getApiDictionare();
+        Call<LanguageDictionare> call = apiDictionare.languageDictionare(mapJson);
+
+        call.enqueue(new Callback<LanguageDictionare>() {
+            @Override
+            public void onResponse(Call<LanguageDictionare> call, Response<LanguageDictionare> response) {
+                try {
+                    Log.d(LOG_TAG, "Start onResponse");
+                    if (response.isSuccessful()){
+                        LanguageDictionare languageDictionare = response.body();
+                        Log.d(LOG_TAG, "listLanguage = " + (languageDictionare.getListLanguage().size()));
+                        app.initDataBase(languageDictionare);
+                        setIntiTextViewSelectLanguage();
+
+                    } else {
+                        //TODO написать обработку ошибок
+                    }
+
+                } catch (Exception e) {
+                    Log.d(LOG_TAG, "Start Exception");
+                    e.printStackTrace();
+                    //TODO написать обработку ошибок
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LanguageDictionare> call, Throwable t) {
+                Log.d(LOG_TAG, "Start onFailure");
+                Log.d(LOG_TAG, "exeption = " + t.toString());
+                //TODO написать обработку ошибок
+            }
+        });
+    }
+
     private void initView(View view) {
+        Log.d(LOG_TAG, "Start initView");
         editText = (EditText)view.findViewById(R.id.edit_text);
         button = (Button)view.findViewById(R.id.button);
         textViewTranslate = (TextView)view.findViewById(R.id.text_view_translate);
@@ -74,19 +121,24 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
         textViewRevers = (TextView)view.findViewById(R.id.text_view_revers);
         textViewRevers.setText(R.string.revers);
         textViewLanguageTranslation = (TextView)view.findViewById(R.id.text_view_language_translator);
-        setIntiTextViewSelectLanguage();
     }
 
     private void setIntiTextViewSelectLanguage(){
-        ArrayList<Language> listLanguageText = app.getListLanguage("en");
-        ArrayList<Language> listLanguageTranslation = app.getListLanguage("ru");
-        Log.d(LOG_TAG, "listLanguageText size = " + listLanguageText.size() +
-                " listLanguageTranslation size = " + listLanguageTranslation.size());
-        textViewLanguageText.setText(listLanguageText.get(0).getLanguage());
-        textViewLanguageTranslation.setText(listLanguageTranslation.get(0).getLanguage());
+        Log.d(LOG_TAG, "Start setIntiTextViewSelectLanguage");
+        if (textViewTranslate.getText().toString().equals("") &&
+                textViewLanguageTranslation.getText().toString().equals("")){
+            ArrayList<Language> listLanguageText = app.getListLanguage("en");
+            ArrayList<Language> listLanguageTranslation = app.getListLanguage("ru");
+            Log.d(LOG_TAG, "listLanguageText size = " + listLanguageText.size() +
+                    " listLanguageTranslation size = " + listLanguageTranslation.size());
+            textViewLanguageText.setText(listLanguageText.get(0).getLanguage());
+            textViewLanguageTranslation.setText(listLanguageTranslation.get(0).getLanguage());
+        }
+
     }
 
     private void buttonBehavior() {
+        Log.d(LOG_TAG, "Start buttonBehavior");
         button.setOnClickListener(this);
         textViewLanguageText.setOnClickListener(this);
         textViewRevers.setOnClickListener(this);
@@ -101,11 +153,6 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                 String textToYandex = getEditText(editText);
 //                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
-
-//                app.createMapJson(textToYandex, "languageDetection");
-//
-//                app.responseLanguageDetection();
-
                 String[] codeLanguageToRequest  = getcodeLanguageToRequest();
                 app.setCodeLangToRequest(codeLanguageToRequest);
 
@@ -116,7 +163,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 reversTextViewLanguageSelect();
                 break;
             case R.id.text_view_language_text:
-                app.responseLanguageDictionare();
+                responseLanguageDictionare(app.createMapJson(null, "dictionare"));
 
                 DialogLanguageSelect dialogFragmentSelectLanguageText = new DialogLanguageSelect();
                 dialogFragmentSelectLanguageText.
@@ -127,7 +174,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                 break;
             case R.id.text_view_language_translator:
-                app.responseLanguageDictionare();
+                responseLanguageDictionare(app.createMapJson(null, "dictionare"));
 
                 DialogLanguageSelect dialogFragmentSelectTranslator = new DialogLanguageSelect();
                 dialogFragmentSelectTranslator.
@@ -174,6 +221,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     }
 
     private String[] getcodeLanguageToRequest(){
+        Log.d(LOG_TAG, "Start getcodeLanguageToRequest");
         String codeLanguageText = textViewLanguageText.getText().toString();
         String codeLanguageToTranslation = textViewLanguageTranslation.getText().toString();
         return new String[] {codeLanguageText, codeLanguageToTranslation};
@@ -181,12 +229,14 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     }
 
     private String getEditText(EditText editText){
+        Log.d(LOG_TAG, "Start getEditText");
         String text = editText.getText().toString();
         if (text.length() == 0) text = "";
         return text;
     }
 
     private void reversTextViewLanguageSelect(){
+        Log.d(LOG_TAG, "Start reversTextViewLanguageSelect");
         String stringTextViewLanguageText = textViewLanguageText.getText().toString();
         String stringTextViewLanguageTranslation = textViewLanguageTranslation.getText().toString();
         textViewLanguageText.setText(stringTextViewLanguageTranslation);
@@ -194,6 +244,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     }
 
     private Bundle prepareBundleForDialogSelectLanguage(TextView textView){
+        Log.d(LOG_TAG, "Start prepareBundleForDialogSelectLanguage");
         String[] language = app.convertArrayList();
         Bundle args = new Bundle();
         args.putStringArray("language", language);
@@ -206,6 +257,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(LOG_TAG, "Start onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
 
         if (data == null || resultCode != Activity.RESULT_OK) return;

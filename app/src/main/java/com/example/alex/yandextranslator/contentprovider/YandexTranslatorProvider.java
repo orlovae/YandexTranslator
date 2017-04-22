@@ -118,8 +118,8 @@ public class YandexTranslatorProvider extends ContentProvider {
         } catch (NullPointerException e) {
             Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
         } finally {
-//            dbHelper.close();
 //            database.close();
+//            dbHelper.close();
         }
 //        Log.d(LOG_TAG, "cursor = " + cursor.toString());
         return cursor;
@@ -178,8 +178,8 @@ public class YandexTranslatorProvider extends ContentProvider {
         } catch (NullPointerException e) {
             Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
         } finally {
-//            dbHelper.close();
 //            database.close();
+//            dbHelper.close();
         }
 
         return resultUri;
@@ -238,8 +238,8 @@ public class YandexTranslatorProvider extends ContentProvider {
         } catch (NullPointerException e) {
             Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
         } finally {
-//            dbHelper.close();
 //            database.close();
+//            dbHelper.close();
         }
 
         return countRowsDelete;
@@ -294,8 +294,8 @@ public class YandexTranslatorProvider extends ContentProvider {
         } catch (NullPointerException e) {
             Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
         } finally {
-//            dbHelper.close();
 //            database.close();
+//            dbHelper.close();
         }
 
         return countRowsUpdate;

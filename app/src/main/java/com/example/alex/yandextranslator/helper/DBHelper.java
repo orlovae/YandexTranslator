@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
             + Contract.HistoryFavorites.COLUMN_TRANSLATABLE_TEXT + " text,"
             + Contract.HistoryFavorites.COLUMN_TRANSLATED_TEXT + " text,"
             + Contract.HistoryFavorites.COLUMN_TRANSLATION_DIRECTION + " text,"
-            + Contract.HistoryFavorites.CULUMN_FAVORITE + " integer);";
+            + Contract.HistoryFavorites.COLUMN_FAVORITE + " integer);";
 
     public DBHelper(Context context){
         super(context, DATABASE_NAME, null, TABLE_VERSION);

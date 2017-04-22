@@ -48,7 +48,7 @@ public final class Contract {
         public static final String COLUMN_TRANSLATABLE_TEXT = "translatable text";
         public static final String COLUMN_TRANSLATED_TEXT = "translated text";
         public static final String COLUMN_TRANSLATION_DIRECTION = "translation direction";
-        public static final boolean CULUMN_FAVORITE = false;
+        public static final String COLUMN_FAVORITE = "favorites";
 
         public static final String PATH_HISTORY_FAVORITES = TABLE_NAME;
 

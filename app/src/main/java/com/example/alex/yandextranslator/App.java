@@ -62,22 +62,23 @@ public class App extends Application {
         return apiTranslator;
     }
 
+    public ApiDictionare getApiDictionare() {
+        return apiDictionare;
+    }
+
+    public void setApiDictionare(ApiDictionare apiDictionare) {
+        this.apiDictionare = apiDictionare;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
 
-        initDictionare();
+        initApiLanguageDictionare();
 
         initApiLanguageDetection();
 
         initApiTranslator();
-    }
-
-    private void initDictionare() {
-        createMapJson(null, "dictionare");
-        initApiLanguageDictionare();
-        responseLanguageDictionare();
-
     }
 
     public Map<String, String> createMapJson(String textToYandex, String key) {
@@ -134,7 +135,7 @@ public class App extends Application {
         return "";//TODO написать обработку ошибки
     }
 
-    private void initApiLanguageDictionare(){
+    public void initApiLanguageDictionare(){
         initGson();
         apiDictionare = ApiClient.getClient(gson).create(ApiDictionare.class);
     }
@@ -180,43 +181,7 @@ public class App extends Application {
         });
     }
 
-
-
-    public void responseLanguageDictionare(){
-        Log.d(LOG_TAG, "Start createRequestLanguageDictionare");
-        Call<LanguageDictionare> call = apiDictionare.languageDictionare(mapJson);
-
-        call.enqueue(new Callback<LanguageDictionare>() {
-            @Override
-            public void onResponse(Call<LanguageDictionare> call, Response<LanguageDictionare> response) {
-                try {
-                    Log.d(LOG_TAG, "Start onResponse");
-                    if (response.isSuccessful()){
-                        response.body().toString();
-                        LanguageDictionare languageDictionare = response.body();
-                        initDataBase(languageDictionare);
-                        Log.d(LOG_TAG, "listLanguage = " + languageDictionare.getListLanguage().size());
-                    } else {
-                        //TODO написать обработку ошибок
-                    }
-
-                } catch (Exception e) {
-                    Log.d(LOG_TAG, "Start Exception");
-                    e.printStackTrace();
-                    //TODO написать обработку ошибок
-                }
-            }
-
-            @Override
-            public void onFailure(Call<LanguageDictionare> call, Throwable t) {
-                Log.d(LOG_TAG, "Start onFailure");
-                Log.d(LOG_TAG, "exeption = " + t.toString());
-                //TODO написать обработку ошибок
-            }
-        });
-    }
-
-    private void initDataBase (LanguageDictionare languageDictionare){
+    public void initDataBase (LanguageDictionare languageDictionare){
         Log.d(LOG_TAG, "Start initDataBase");
 
         Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
@@ -247,13 +212,12 @@ public class App extends Application {
     private void createNewLanguageTable(ArrayList<Language> listLanguageFromResponse){
         Log.d(LOG_TAG, "Start createNewLanguageTable");
 
-        ContentValues cv = new ContentValues();
-
         for (Language language : listLanguageFromResponse){
+            ContentValues cv = new ContentValues();
             cv.put(Contract.Language.COLUMN_CODE_LANGUAGE, language.getCodeLanguage());
             cv.put(Contract.Language.COLUMN_LANGUAGE, language.getLanguage());
+            getContentResolver().insert(Contract.Language.CONTENT_URI, cv);
         }
-        getContentResolver().insert(Contract.Language.CONTENT_URI, cv);
     }
 
     public ArrayList<Language> getListLanguage(String codeLanguage){
