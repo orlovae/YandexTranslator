@@ -5,7 +5,8 @@
     <string name="tab_translator">Translator</string>
     <string name="tab_history">History</string>
     <string name="tab_favorites">Favorites</string>
-    <string name="search">seacrh in history</string>
+    <string name="search_in_historys">seacrh in historys</string>
+    <string name="search_in_favorites">seacrh in favorites</string>
     <string name="select_favorites">&#9829;</string>
     <string name="un_select_favorites">&#9825;</string>
     <string name="loop_search">&#128269;</string>
