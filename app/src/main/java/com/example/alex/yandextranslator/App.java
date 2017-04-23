@@ -51,10 +51,6 @@ public class App extends Application {
 
     private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
 
-    public String[] getCodeLangToRequest() {
-        return codeLangToRequest;
-    }
-
     public void setCodeLangToRequest(String[] codeLangToRequest) {
         this.codeLangToRequest = codeLangToRequest;
     }
@@ -65,10 +61,6 @@ public class App extends Application {
 
     public ApiDictionare getApiDictionare() {
         return apiDictionare;
-    }
-
-    public void setApiDictionare(ApiDictionare apiDictionare) {
-        this.apiDictionare = apiDictionare;
     }
 
     @Override
@@ -196,8 +188,6 @@ public class App extends Application {
         Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
                 null, null, null, null);
 
-//        CursorAdapter cursorAdapter = new CursorAdapter(cursor);
-
         ArrayList<Language> listLanguageFromCursor = cursorAdapter.getListToCursor(cursor);
         ArrayList<Language> listLanguageFromResponse = languageDictionare.getListLanguage();
 
@@ -230,12 +220,11 @@ public class App extends Application {
     }
 
     public ArrayList<Language> getListLanguage(String codeLanguage){
-        String selection = Contract.Language.COLUMN_CODE_LANGUAGE + "=?";
+        String selection = Contract.Language.COLUMN_CODE_LANGUAGE + " = ?";
         String[] selectionArgs = {codeLanguage};
 
         Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
                 null, selection, selectionArgs, null);
-//        CursorAdapter cursorAdapter = new CursorAdapter(cursor);
 
         return cursorAdapter.getListToCursor(cursor);
     }
@@ -262,26 +251,6 @@ public class App extends Application {
 
         if (checkDuplicationInHistory(prepareResponseTranslator)){
             getContentResolver().insert(Contract.HistoryFavorites.CONTENT_URI, cv);
-        }
-    }
-
-    private void selectFavoriteToHistoryFavoritesTable(int id, boolean favorite){
-        int intFavorite = castBooleanToInt(favorite);
-        ContentValues cv = new ContentValues();
-        cv.put(Contract.HistoryFavorites.COLUMN_FAVORITE, intFavorite);
-
-        String selection = Contract.HistoryFavorites.COLUMN_ID;
-        String[] selectionArgs = {String.valueOf(id)};
-
-        getContentResolver().update(Contract.HistoryFavorites.CONTENT_URI, cv, selection,
-                selectionArgs);
-    }
-
-    private int castBooleanToInt(boolean favorite) {
-        if (favorite) {
-            return 1;
-        } else {
-            return 0;
         }
     }
 

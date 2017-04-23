@@ -20,7 +20,6 @@ import android.widget.EditText;
 import com.example.alex.yandextranslator.App;
 import com.example.alex.yandextranslator.R;
 import com.example.alex.yandextranslator.adapter.RecyclerViewFavoriteAdapter;
-import com.example.alex.yandextranslator.adapter.RecyclerViewHistoryAdapter;
 import com.example.alex.yandextranslator.data.Contract;
 import com.example.alex.yandextranslator.model.HistoryFavorites;
 
@@ -30,7 +29,8 @@ import java.util.ArrayList;
  * Created by alex on 20.04.17.
  */
 
-public class TabFragmentFavorites extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TabFragmentFavorites extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
     private final String LOG_TAG = this.getClass().getSimpleName();
 
     private EditText editTextSearch;
@@ -53,13 +53,19 @@ public class TabFragmentFavorites extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, "Start onCreateView");
 
-        View view = inflater.inflate(R.layout.history_tab_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.favorite_tab_fragment_layout, container, false);
 
         initView(view);
 
         initRecyclerView();
 
+        editTextBehavior();
+
         return view;
+    }
+
+    private void editTextBehavior() {
+        editTextSearch.setOnClickListener(this);
     }
 
     private void initView(View view){
@@ -103,5 +109,17 @@ public class TabFragmentFavorites extends Fragment implements LoaderManager.Load
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
+    }
+
+    @Override
+    public void onClick(View v) {
+        String textSearch = getTextInEditText(editTextSearch);
+    }
+
+    private String getTextInEditText(EditText editText){
+        Log.d(LOG_TAG, "Start getEditText");
+        String text = editText.getText().toString();
+        if (text.length() == 0) text = "";
+        return text;
     }
 }

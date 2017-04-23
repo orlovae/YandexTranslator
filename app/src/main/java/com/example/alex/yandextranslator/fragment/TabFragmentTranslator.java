@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,7 +72,33 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
         buttonBehavior();
 
+        editTextBehavior();
+
         return view;
+    }
+
+    private void editTextBehavior(){
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String textToYandex = s.toString();
+//                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
+                String[] codeLanguageToRequest  = getcodeLanguageToRequest();
+                app.setCodeLangToRequest(codeLanguageToRequest);
+
+                responseTranslator(app.createMapJson(textToYandex, "translator"));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void initDictionare() {
@@ -129,11 +157,11 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
         Log.d(LOG_TAG, "Start setIntiTextViewSelectLanguage");
         if (textViewTranslate.getText().toString().equals("") &&
                 textViewLanguageTranslation.getText().toString().equals("")){
+
             ArrayList<Language> listLanguageText = app.getListLanguage("en");
-            ArrayList<Language> listLanguageTranslation = app.getListLanguage("ru");
-            Log.d(LOG_TAG, "listLanguageText size = " + listLanguageText.size() +
-                    " listLanguageTranslation size = " + listLanguageTranslation.size());
             textViewLanguageText.setText(listLanguageText.get(0).getLanguage());
+
+            ArrayList<Language> listLanguageTranslation = app.getListLanguage("ru");
             textViewLanguageTranslation.setText(listLanguageTranslation.get(0).getLanguage());
         }
 
@@ -153,12 +181,12 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
         switch (v.getId()) {
             case R.id.button:
 
-                String textToYandex = getEditText(editText);
-//                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
-                String[] codeLanguageToRequest  = getcodeLanguageToRequest();
-                app.setCodeLangToRequest(codeLanguageToRequest);
-
-                responseTranslator(app.createMapJson(textToYandex, "translator"));
+//                String textToYandex = getEditText(editText);
+////                Log.d(LOG_TAG, "textToYandex = " + textToYandex);
+//                String[] codeLanguageToRequest  = getcodeLanguageToRequest();
+//                app.setCodeLangToRequest(codeLanguageToRequest);
+//
+//                responseTranslator(app.createMapJson(textToYandex, "translator"));
 
                 break;
             case R.id.text_view_revers:
