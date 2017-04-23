@@ -1,6 +1,7 @@
 package com.example.alex.yandextranslator.adapter;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,13 +10,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.alex.yandextranslator.R;
-import com.example.alex.yandextranslator.model.HistoryFavorites;
+import com.example.alex.yandextranslator.data.Contract;
 
 /**
  * Created by alex on 22.04.17.
  */
-
-import java.util.ArrayList;
 
 public class RecyclerViewHistoryAdapter extends
         RecyclerView.Adapter<RecyclerViewHistoryAdapter.ViewHolder>{
@@ -23,12 +22,25 @@ public class RecyclerViewHistoryAdapter extends
 
     private Context context;
 
-    private ArrayList<HistoryFavorites> historyFavoritesArrayList;
+    private Cursor dataCursor;
 
     public RecyclerViewHistoryAdapter(Context context,
-                                      ArrayList<HistoryFavorites> historyFavoritesArrayList) {
+                                      Cursor cursor) {
         this.context = context;
-        this.historyFavoritesArrayList = historyFavoritesArrayList;
+        this.dataCursor = cursor;
+    }
+
+    public Cursor swapCursor (Cursor cursor){
+        if (dataCursor == cursor){
+            return null;
+        }
+
+        Cursor oldCursor = dataCursor;
+        this.dataCursor = cursor;
+        if (cursor != null){
+            this.notifyDataSetChanged();
+        }
+        return oldCursor;
     }
 
     @Override
@@ -43,26 +55,49 @@ public class RecyclerViewHistoryAdapter extends
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Log.d(LOG_TAG, "Start onBindViewHolder");
-        HistoryFavorites historyFavorites = historyFavoritesArrayList.get(position);
-        String translatableText = historyFavorites.getTranslatableText();
-        String translatedText = historyFavorites.getTranslatedText();
-        String translationDirection = historyFavorites.getTranslationDirection();
-        boolean favorite = historyFavorites.isFavorite();
 
-        holder.textViewTranslatableText.setText(translatableText);
-        holder.textViewTranslatedText.setText(translatedText);
-        holder.textViewTranslationDirection.setText(translationDirection);
-        if (favorite){
+        dataCursor.moveToPosition(position);
+
+        int idColIndex = dataCursor.getColumnIndex(Contract.HistoryFavorites.COLUMN_ID);
+        int translatableTextColIndex = dataCursor.getColumnIndex(Contract.HistoryFavorites.
+                COLUMN_TRANSLATABLE_TEXT);
+        int translatedTextColIndex = dataCursor.getColumnIndex(Contract.HistoryFavorites.
+                COLUMN_TRANSLATED_TEXT);
+        int translationDirectionColIndex = dataCursor.getColumnIndex(Contract.HistoryFavorites.
+                COLUMN_TRANSLATION_DIRECTION);
+        int favoriteColIndex = dataCursor.getColumnIndex(Contract.HistoryFavorites.
+                COLUMN_FAVORITE);
+
+        int id = dataCursor.getInt(idColIndex);
+        String translatableFromCursor = dataCursor.getString(translatableTextColIndex);
+        String translatedFromCursor = dataCursor.getString(translatedTextColIndex);
+        String translationDirectionFromCursor = dataCursor.
+                getString(translationDirectionColIndex);
+        int favorite = dataCursor.getInt(favoriteColIndex);
+        boolean favoriteFromCursor = castIntToBoolean(favorite);
+
+        holder.textViewTranslatableText.setText(translatableFromCursor);
+        holder.textViewTranslatedText.setText(translatedFromCursor);
+        holder.textViewTranslationDirection.setText(translationDirectionFromCursor);
+        if (favoriteFromCursor){
             holder.textViewFavorite.setText(context.getString(R.string.select_favorites));
         } else {
             holder.textViewFavorite.setText(context.getString(R.string.un_select_favorites));
         }
     }
 
+    private boolean castIntToBoolean(int favoriteFromCursor){
+        if (favoriteFromCursor == 0){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @Override
     public int getItemCount() {
         Log.d(LOG_TAG, "Start getItemCount");
-        return historyFavoritesArrayList == null ? 0 : historyFavoritesArrayList.size();
+        return (dataCursor == null) ? 0 : dataCursor.getCount();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

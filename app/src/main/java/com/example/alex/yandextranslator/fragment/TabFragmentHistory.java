@@ -39,6 +39,8 @@ public class TabFragmentHistory extends Fragment implements LoaderManager.Loader
 
     private App app;
 
+    private int LOADER_ID = 1;
+
     @Override
     public void onAttach(Context context) {
         Log.d(LOG_TAG, "Start onAttach");
@@ -81,12 +83,17 @@ public class TabFragmentHistory extends Fragment implements LoaderManager.Loader
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        adapter = new RecyclerViewHistoryAdapter(getActivity(), arrayList);
-        adapter.notifyDataSetChanged();
+        adapter = new RecyclerViewHistoryAdapter(getActivity(), null);
         recyclerViewHistory.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
         recyclerViewHistory.setAdapter(adapter);
         recyclerViewHistory.setLayoutManager(layoutManager);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -101,11 +108,11 @@ public class TabFragmentHistory extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.
+        adapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        adapter.swapCursor(null);
     }
 }
