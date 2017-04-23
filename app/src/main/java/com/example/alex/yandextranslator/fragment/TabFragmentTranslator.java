@@ -24,7 +24,9 @@ import com.example.alex.yandextranslator.data.Contract;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.example.alex.yandextranslator.model.response.Translator;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.DictionaryEntry;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
+import com.example.alex.yandextranslator.rest.ApiDictionaryEntry;
 import com.example.alex.yandextranslator.rest.ApiTranslator;
 
 import java.util.ArrayList;
@@ -91,7 +93,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 String[] codeLanguageToRequest  = getcodeLanguageToRequest();
                 app.setCodeLangToRequest(codeLanguageToRequest);
 
-                responseTranslator(app.createMapJson(textToYandex, "translator"));
+                responseTranslator(app.createMapJson(textToYandex, "dictionaryEntry"));
             }
 
             @Override
@@ -220,21 +222,21 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     public void responseTranslator(Map<String, String> mapJson) {
         Log.d(LOG_TAG, "Start responseTranslator");
 
-        ApiTranslator apiTranslator = app.getApiTranslator();
+        ApiDictionaryEntry apiDictionaryEntry = app.getApiDictionaryEntry();
 
-        Call<Translator> call = apiTranslator.translate(mapJson);
+        Call<DictionaryEntry> call = apiDictionaryEntry.dictionaryEntry(mapJson);
 
-        call.enqueue(new Callback<Translator>() {
+        call.enqueue(new Callback<DictionaryEntry>() {
             @Override
-            public void onResponse(Call<Translator> call, Response<Translator> response) {
+            public void onResponse(Call<DictionaryEntry> call, Response<DictionaryEntry> response) {
                 try {
                     String responseTranslator;
                     if (response.isSuccessful()){
-                        responseTranslator = response.body().getText().toString();
+                        responseTranslator = response.body().toString();
                         String textTranslator = mapJson.get("text");
                         String translationDirection = mapJson.get("lang");
-                        app.addToHistoryFavoritesTable(textTranslator, responseTranslator,
-                                translationDirection, 0);
+//                        app.addToHistoryFavoritesTable(textTranslator, responseTranslator,
+//                                translationDirection, 0);
                     } else {
                         responseTranslator = getString(R.string.error_invalid_responce);
                     }
@@ -246,13 +248,50 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 }
             }
             @Override
-            public void onFailure(Call<Translator> call, Throwable t) {
+            public void onFailure(Call<DictionaryEntry> call, Throwable t) {
                 t.printStackTrace();
                 Log.d(LOG_TAG, "exeption onFailure " + t.toString());
                 //TODO написать обработку ошибок
             }
         });
     }
+
+//    public void responseTranslator(Map<String, String> mapJson) {
+//        Log.d(LOG_TAG, "Start responseTranslator");
+//
+//        ApiTranslator apiTranslator = app.getApiTranslator();
+//
+//        Call<Translator> call = apiTranslator.translate(mapJson);
+//
+//        call.enqueue(new Callback<Translator>() {
+//            @Override
+//            public void onResponse(Call<Translator> call, Response<Translator> response) {
+//                try {
+//                    String responseTranslator;
+//                    if (response.isSuccessful()){
+//                        responseTranslator = response.body().getText().toString();
+//                        String textTranslator = mapJson.get("text");
+//                        String translationDirection = mapJson.get("lang");
+//                        app.addToHistoryFavoritesTable(textTranslator, responseTranslator,
+//                                translationDirection, 0);
+//                    } else {
+//                        responseTranslator = getString(R.string.error_invalid_responce);
+//                    }
+//                    textViewTranslate.setText(responseTranslator);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    Log.d(LOG_TAG, "exeption onResponce " + e.toString());
+//                    //TODO написать обработку ошибок
+//                }
+//            }
+//            @Override
+//            public void onFailure(Call<Translator> call, Throwable t) {
+//                t.printStackTrace();
+//                Log.d(LOG_TAG, "exeption onFailure " + t.toString());
+//                //TODO написать обработку ошибок
+//            }
+//        });
+//    }
 
     private String[] getcodeLanguageToRequest(){
         Log.d(LOG_TAG, "Start getcodeLanguageToRequest");

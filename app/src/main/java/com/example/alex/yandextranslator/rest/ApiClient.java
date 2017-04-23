@@ -14,7 +14,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ApiClient {
-    public static final String BASE_URL = "https://translate.yandex.net";
+    private static final String LOG_TAG = "ApiClient";
+    public static final String TRANSLATE_URL = "https://translate.yandex.net";
+    public static final String DICTIONARY_ENTRY_URL = "https://dictionary.yandex.net";
     private static Retrofit retrofit = null;
 
     static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor
@@ -25,7 +27,7 @@ public class ApiClient {
     public static Retrofit getClient(){
         if (retrofit == null){
             retrofit = new Retrofit.Builder().client(client)
-                    .baseUrl(BASE_URL)
+                    .baseUrl(TRANSLATE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
@@ -35,10 +37,20 @@ public class ApiClient {
     public static Retrofit getClient(Gson gson){
         if (retrofit == null){
             retrofit = new Retrofit.Builder().client(client)
-                    .baseUrl(BASE_URL)
+                    .baseUrl(TRANSLATE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
+        return retrofit;
+    }
+
+    public static Retrofit getClientDictionaryEntry(){
+        Log.d(LOG_TAG, "Start retrofit getClientDictionaryEntry");
+        retrofit = new Retrofit.Builder().client(client)
+                .baseUrl("https://dictionary.yandex.net")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
         return retrofit;
     }
 }

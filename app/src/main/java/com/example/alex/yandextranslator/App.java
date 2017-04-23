@@ -14,6 +14,7 @@ import com.example.alex.yandextranslator.model.response.LanguageDetection;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.example.alex.yandextranslator.rest.ApiClient;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
+import com.example.alex.yandextranslator.rest.ApiDictionaryEntry;
 import com.example.alex.yandextranslator.rest.ApiLanguageDetection;
 import com.example.alex.yandextranslator.rest.ApiTranslator;
 import com.google.gson.FieldNamingPolicy;
@@ -38,6 +39,7 @@ public class App extends Application {
     private ApiTranslator apiTranslator;
     private ApiLanguageDetection apiLanguageDetection;
     private ApiDictionare apiDictionare;
+    private ApiDictionaryEntry apiDictionaryEntry;
 
     private ArrayList<Language> listLanguage;
 
@@ -49,7 +51,10 @@ public class App extends Application {
 
     private CursorAdapter cursorAdapter;
 
-    private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
+    private final String KEY_TRANSLATE = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
+
+    private final String KEY_DICTIONARY_ENTRY = "dict.1.1.20170423T182533Z.177a26d2026f3eb9.392449125c6824447549afa55b9c5f97ebbf9899";
+
 
     public void setCodeLangToRequest(String[] codeLangToRequest) {
         this.codeLangToRequest = codeLangToRequest;
@@ -63,6 +68,10 @@ public class App extends Application {
         return apiDictionare;
     }
 
+    public ApiDictionaryEntry getApiDictionaryEntry() {
+        return apiDictionaryEntry;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -74,6 +83,12 @@ public class App extends Application {
         initApiLanguageDetection();
 
         initApiTranslator();
+
+        initApiDictionaryEntry();
+    }
+
+    public void initApiDictionaryEntry(){
+        apiDictionaryEntry = ApiClient.getClientDictionaryEntry().create(ApiDictionaryEntry.class);
     }
 
     private void initCursorAdapter(){
@@ -93,13 +108,13 @@ public class App extends Application {
         switch (key) {
             case "dictionare":
 //                Log.d(LOG_TAG, "Start createMapJson, case \"dictionare\"");
-                mapJson.put("key", KEY);
+                mapJson.put("key", KEY_TRANSLATE);
                 mapJson.put("ui", "ru");
 //                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
                 break;
             case "languageDetection":
 //                Log.d(LOG_TAG, "Start createMapJson, case \"languageDetection\"");
-                mapJson.put("key", KEY);
+                mapJson.put("key", KEY_TRANSLATE);
                 mapJson.put("text", textToYandex);
 //                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
                 break;
@@ -109,9 +124,20 @@ public class App extends Application {
                 String lang = setLang(codeLangToRequest);
                 Log.d(LOG_TAG, "lang = " + lang);
 
-                mapJson.put("key", KEY);
+                mapJson.put("key", KEY_TRANSLATE);
                 mapJson.put("text", textToYandex);
                 mapJson.put("lang", lang);
+//                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
+                break;
+            case "dictionaryEntry":
+//                Log.d(LOG_TAG, "Start createMapJson, case \"translator\"");
+
+                String langDictionaryEntry = setLang(codeLangToRequest);
+                Log.d(LOG_TAG, "langDictionaryEntry = " + langDictionaryEntry);
+
+                mapJson.put("key", KEY_DICTIONARY_ENTRY);
+                mapJson.put("text", textToYandex);
+                mapJson.put("lang", langDictionaryEntry);
 //                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
                 break;
         }

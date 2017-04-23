@@ -38,5 +38,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
     //для логгирования запросов
     compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'org.apache.commons:commons-lang3:3.5'
     testCompile 'junit:junit:4.12'
 }
