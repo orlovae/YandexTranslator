@@ -1,9 +1,14 @@
 package com.example.alex.yandextranslator.fragment;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +21,7 @@ import android.widget.EditText;
 import com.example.alex.yandextranslator.App;
 import com.example.alex.yandextranslator.R;
 import com.example.alex.yandextranslator.adapter.RecyclerViewHistoryAdapter;
+import com.example.alex.yandextranslator.data.Contract;
 import com.example.alex.yandextranslator.model.HistoryFavorites;
 
 import java.util.ArrayList;
@@ -24,7 +30,7 @@ import java.util.ArrayList;
  * Created by alex on 20.04.17.
  */
 
-public class TabFragmentHistory extends Fragment {
+public class TabFragmentHistory extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private final String LOG_TAG = this.getClass().getSimpleName();
 
     private EditText editTextSearch;
@@ -60,13 +66,46 @@ public class TabFragmentHistory extends Fragment {
     }
 
     private void initRecyclerView(){
+        Log.d(LOG_TAG, "Start initRecyclerView");
         ArrayList<HistoryFavorites> arrayList = app.getHistoryFavoritesArrayList();
+
+//        Log.d(LOG_TAG, "arrayList size = " + arrayList.size());
+//        for (HistoryFavorites item:arrayList
+//             ) {
+//            Log.d(LOG_TAG, "id = " + item.getId());
+//            Log.d(LOG_TAG, "translatableText = " + item.getTranslatableText());
+//            Log.d(LOG_TAG, "translatedText = " + item.getTranslatedText());
+//            Log.d(LOG_TAG, "translationDirection = " + item.getTranslationDirection());
+//            Log.d(LOG_TAG, "favorite is " + item.isFavorite());
+//        }
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         adapter = new RecyclerViewHistoryAdapter(getActivity(), arrayList);
+        adapter.notifyDataSetChanged();
+        recyclerViewHistory.addItemDecoration(new DividerItemDecoration(getActivity(),
+                DividerItemDecoration.VERTICAL));
         recyclerViewHistory.setAdapter(adapter);
         recyclerViewHistory.setLayoutManager(layoutManager);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(),
+                Contract.HistoryFavorites.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }

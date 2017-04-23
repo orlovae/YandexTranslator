@@ -2,6 +2,7 @@ package com.example.alex.yandextranslator.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ public class RecyclerViewHistoryAdapter extends
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d(LOG_TAG, "Start onCreateViewHolder");
         View view = LayoutInflater.from(context).inflate(R.layout.list_view_item_history_layout,
                 parent, false);
 
@@ -40,6 +42,7 @@ public class RecyclerViewHistoryAdapter extends
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Log.d(LOG_TAG, "Start onBindViewHolder");
         HistoryFavorites historyFavorites = historyFavoritesArrayList.get(position);
         String translatableText = historyFavorites.getTranslatableText();
         String translatedText = historyFavorites.getTranslatedText();
@@ -58,7 +61,8 @@ public class RecyclerViewHistoryAdapter extends
 
     @Override
     public int getItemCount() {
-        return 0;
+        Log.d(LOG_TAG, "Start getItemCount");
+        return historyFavoritesArrayList == null ? 0 : historyFavoritesArrayList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -74,10 +78,11 @@ public class RecyclerViewHistoryAdapter extends
         }
 
         private void initView(View itemView){
+            Log.d(LOG_TAG, "Start initView");
             textViewFavorite = (TextView)itemView.findViewById(R.id.text_view_favorite);
             textViewTranslatableText = (TextView)itemView.findViewById(R.id.
                     text_view_translatable_text);
-            textViewTranslatedText = (TextView)itemView.findViewById(R.id.text_view_translate);
+            textViewTranslatedText = (TextView)itemView.findViewById(R.id.text_view_translated_text);
             textViewTranslationDirection = (TextView)itemView.findViewById(R.id.
                     text_view_translation_direction);
         }

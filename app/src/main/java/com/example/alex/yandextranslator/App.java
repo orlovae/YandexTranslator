@@ -282,4 +282,11 @@ public class App extends Application {
             return false;
         }
     }
+
+    public ArrayList<HistoryFavorites> getHistoryFavoritesArrayList(){
+        Cursor cursor = getContentResolver().query(Contract.HistoryFavorites.CONTENT_URI,
+                null, null, null, null);
+
+        return cursorAdapter.getArrayListHistoryFavoritesToCursor(cursor);
+    }
 }
