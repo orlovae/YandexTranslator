@@ -265,6 +265,26 @@ public class App extends Application {
         }
     }
 
+    private void selectFavoriteToHistoryFavoritesTable(int id, boolean favorite){
+        int intFavorite = castBooleanToInt(favorite);
+        ContentValues cv = new ContentValues();
+        cv.put(Contract.HistoryFavorites.COLUMN_FAVORITE, intFavorite);
+
+        String selection = Contract.HistoryFavorites.COLUMN_ID;
+        String[] selectionArgs = {String.valueOf(id)};
+
+        getContentResolver().update(Contract.HistoryFavorites.CONTENT_URI, cv, selection,
+                selectionArgs);
+    }
+
+    private int castBooleanToInt(boolean favorite) {
+        if (favorite) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
     private boolean checkDuplicationInHistory(String prepareResponseTranslator){
         Log.d(LOG_TAG, "Start checkDuplicationInHistory");
         String selection = Contract.HistoryFavorites.COLUMN_TRANSLATED_TEXT + "=?";

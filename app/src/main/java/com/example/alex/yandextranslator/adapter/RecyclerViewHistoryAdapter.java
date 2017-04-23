@@ -1,5 +1,6 @@
 package com.example.alex.yandextranslator.adapter;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
@@ -83,6 +84,38 @@ public class RecyclerViewHistoryAdapter extends
             holder.textViewFavorite.setText(context.getString(R.string.select_favorites));
         } else {
             holder.textViewFavorite.setText(context.getString(R.string.un_select_favorites));
+        }
+        holder.textViewFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (holder.textViewFavorite.getText().toString().equals
+                        (context.getString(R.string.un_select_favorites))){
+                    holder.textViewFavorite.setText(context.getString(R.string.select_favorites));
+                } else {
+                    holder.textViewFavorite.setText(context.getString(R.string.un_select_favorites));
+                }
+                selectFavoriteToHistoryFavoritesTable(id, favoriteFromCursor);
+            }
+        });
+    }
+
+    private void selectFavoriteToHistoryFavoritesTable(int id, boolean favorite){
+        int intFavorite = castBooleanToInt(favorite);
+        ContentValues cv = new ContentValues();
+        cv.put(Contract.HistoryFavorites.COLUMN_FAVORITE, intFavorite);
+
+        String selection = Contract.HistoryFavorites.COLUMN_ID + " = ?";
+        String[] selectionArgs = {Integer.toString(id)};
+
+        context.getContentResolver().update(Contract.HistoryFavorites.CONTENT_URI, cv, selection,
+                selectionArgs);
+    }
+
+    private int castBooleanToInt(boolean favorite) {
+        if (favorite) {
+            return 0;
+        } else {
+            return 1;
         }
     }
 

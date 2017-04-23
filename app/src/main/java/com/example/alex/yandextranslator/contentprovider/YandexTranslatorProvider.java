@@ -246,22 +246,22 @@ public class YandexTranslatorProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+    public int update(@NonNull Uri uri, @Nullable ContentValues values,
+                      @Nullable String selection, @Nullable String[] selectionArgs) {
 //        Log.d(LOG_TAG, "Start delete");
 //        Log.d(LOG_TAG, "query, " + uri.toString());
         String rowIDLanguage, rowIDHistoryFavorites;
 
         String table_name = "";
 
-
         openDatabase();
 
         switch (uriMatcher.match(uri)) {
             case URI_MATCHER_LANGUAGE_ALL_ROWS:
-
+                table_name = Contract.Language.TABLE_NAME;
                 break;
             case URI_MATCHER_HISTORY_FAVORITES_ALL_ROWS:
-
+                table_name =Contract.HistoryFavorites.TABLE_NAME;
                 break;
             case URI_MATCHER_LANGUAGE_SINGLE_ROW:
                 table_name = Contract.Language.TABLE_NAME;
@@ -289,6 +289,7 @@ public class YandexTranslatorProvider extends ContentProvider {
         }
 
         int countRowsUpdate = database.update(table_name, values, selection, selectionArgs);
+        Log.d(LOG_TAG, "countRowsUpdate = " + countRowsUpdate);
         try {
             getContext().getContentResolver().notifyChange(uri, null);
         } catch (NullPointerException e) {
