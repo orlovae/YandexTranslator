@@ -9,7 +9,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -71,16 +70,6 @@ public class TabFragmentHistory extends Fragment implements LoaderManager.Loader
         Log.d(LOG_TAG, "Start initRecyclerView");
         ArrayList<HistoryFavorites> arrayList = app.getHistoryFavoritesArrayList();
 
-//        Log.d(LOG_TAG, "arrayList size = " + arrayList.size());
-//        for (HistoryFavorites item:arrayList
-//             ) {
-//            Log.d(LOG_TAG, "id = " + item.getId());
-//            Log.d(LOG_TAG, "translatableText = " + item.getTranslatableText());
-//            Log.d(LOG_TAG, "translatedText = " + item.getTranslatedText());
-//            Log.d(LOG_TAG, "translationDirection = " + item.getTranslationDirection());
-//            Log.d(LOG_TAG, "favorite is " + item.isFavorite());
-//        }
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         adapter = new RecyclerViewHistoryAdapter(getActivity(), null);
@@ -99,11 +88,7 @@ public class TabFragmentHistory extends Fragment implements LoaderManager.Loader
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(),
-                Contract.HistoryFavorites.CONTENT_URI,
-                null,
-                null,
-                null,
-                null);
+                Contract.HistoryFavorites.CONTENT_URI, null, null, null, null);
     }
 
     @Override
