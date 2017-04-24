@@ -17,6 +17,8 @@ public class ApiClient {
     public static final String BASE_URL = "https://translate.yandex.net";
     private static Retrofit retrofit = null;
 
+    /*Этот метод используется для логгирования запросов, ответов с/на севрера. Для его работы
+    пришлось подключить Java 8 Gradle*/
     static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor
             (message -> Log.d("Retrofit", message)).setLevel(HttpLoggingInterceptor.Level.BODY);
     static OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor ).build();

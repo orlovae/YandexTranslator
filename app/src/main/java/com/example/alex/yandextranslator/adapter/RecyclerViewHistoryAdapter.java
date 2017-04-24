@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +18,11 @@ import com.example.alex.yandextranslator.data.Contract;
 
 public class RecyclerViewHistoryAdapter extends
         RecyclerView.Adapter<RecyclerViewHistoryAdapter.ViewHolder>{
-    private final String LOG_TAG = this.getClass().getSimpleName();
-
     private Context context;
 
     private Cursor dataCursor;
 
-    public RecyclerViewHistoryAdapter(Context context,
-                                      Cursor cursor) {
+    public RecyclerViewHistoryAdapter(Context context, Cursor cursor) {
         this.context = context;
         this.dataCursor = cursor;
     }
@@ -46,7 +42,6 @@ public class RecyclerViewHistoryAdapter extends
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(LOG_TAG, "Start onCreateViewHolder");
         View view = LayoutInflater.from(context).inflate(R.layout.list_view_item_history_layout,
                 parent, false);
 
@@ -55,8 +50,6 @@ public class RecyclerViewHistoryAdapter extends
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Log.d(LOG_TAG, "Start onBindViewHolder");
-
         dataCursor.moveToPosition(position);
 
         int idColIndex = dataCursor.getColumnIndex(Contract.HistoryFavorites.COLUMN_ID);
@@ -129,7 +122,6 @@ public class RecyclerViewHistoryAdapter extends
 
     @Override
     public int getItemCount() {
-        Log.d(LOG_TAG, "Start getItemCount");
         return (dataCursor == null) ? 0 : dataCursor.getCount();
     }
 
@@ -146,7 +138,6 @@ public class RecyclerViewHistoryAdapter extends
         }
 
         private void initView(View itemView){
-            Log.d(LOG_TAG, "Start initView");
             textViewFavorite = (TextView)itemView.findViewById(R.id.text_view_favorite);
             textViewTranslatableText = (TextView)itemView.findViewById(R.id.
                     text_view_translatable_text);

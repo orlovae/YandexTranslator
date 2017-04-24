@@ -1,6 +1,6 @@
 package com.example.alex.yandextranslator.model.response;
 
-import com.example.alex.yandextranslator.model.language.Language;
+import com.example.alex.yandextranslator.model.Language;
 
 import java.util.ArrayList;
 

@@ -11,7 +11,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +20,12 @@ import com.example.alex.yandextranslator.App;
 import com.example.alex.yandextranslator.R;
 import com.example.alex.yandextranslator.adapter.RecyclerViewHistoryAdapter;
 import com.example.alex.yandextranslator.data.Contract;
-import com.example.alex.yandextranslator.model.HistoryFavorites;
-
-import java.util.ArrayList;
 
 /**
  * Created by alex on 20.04.17.
  */
 
 public class TabFragmentHistory extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private final String LOG_TAG = this.getClass().getSimpleName();
-
     private EditText editTextSearch;
     private RecyclerView recyclerViewHistory;
     private RecyclerViewHistoryAdapter adapter;
@@ -42,16 +36,14 @@ public class TabFragmentHistory extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onAttach(Context context) {
-        Log.d(LOG_TAG, "Start onAttach");
         super.onAttach(context);
         app = ((App)getActivity().getApplicationContext());
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "Start onCreateView");
-
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.history_tab_fragment_layout, container, false);
 
         initView(view);
@@ -67,9 +59,6 @@ public class TabFragmentHistory extends Fragment implements LoaderManager.Loader
     }
 
     private void initRecyclerView(){
-        Log.d(LOG_TAG, "Start initRecyclerView");
-        ArrayList<HistoryFavorites> arrayList = app.getHistoryFavoritesArrayList();
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         adapter = new RecyclerViewHistoryAdapter(getActivity(), null);

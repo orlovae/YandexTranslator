@@ -13,12 +13,10 @@ public final class Contract {
     public Contract() {
     }
 
-    // Uri authority
     public static final String SCHEME = "content://";
     public static final String AUTHORITY = "com.example.alex.yandextranslator";
     public static final Uri BASE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY);
 
-    // path
     public static final class Language implements BaseColumns {
         public static final String TABLE_NAME = "Language";
         public static final String COLUMN_ID = BaseColumns._ID;
@@ -27,16 +25,12 @@ public final class Contract {
 
         public static final String PATH_LANGUAGE = TABLE_NAME;
 
-        // Общий Uri
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_LANGUAGE);
 
-        // Типы данных
-        // набор строк //TODO пересмотреть урок, уточнить что это за хрень
         public static final String TYPE_LANGUAGE_ALL_ROW =
                 ContentResolver.CURSOR_DIR_BASE_TYPE +
                         "/" + AUTHORITY + "/" + TABLE_NAME;
 
-        // одна строка
         public static final String TYPE_LANGUAGE_SINGLE_ROW =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE +
                         "/" + AUTHORITY + "/" + TABLE_NAME;
@@ -59,10 +53,8 @@ public final class Contract {
                 ContentResolver.CURSOR_DIR_BASE_TYPE +
                         "/" + AUTHORITY + "/" + TABLE_NAME;
 
-        // одна строка
         public static final String TYPE_HISTORY_FAVORITES_SINGLE_ROW =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE +
                         "/" + AUTHORITY + "/" + TABLE_NAME;
     }
-
 }

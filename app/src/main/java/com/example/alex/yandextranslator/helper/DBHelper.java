@@ -12,7 +12,7 @@ import com.example.alex.yandextranslator.data.Contract;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "yandexTranslator.db";
-    public static final int TABLE_VERSION = 1;
+    private static final int TABLE_VERSION = 1;
     private final String SQL_CREATE_LAGUAGE_TABLE = "CREATE TABLE "
             + Contract.Language.TABLE_NAME + " ("
             + Contract.Language._ID + " integer primary key autoincrement,"

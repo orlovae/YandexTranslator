@@ -1,12 +1,10 @@
 package com.example.alex.yandextranslator.adapter;
 
-import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.example.alex.yandextranslator.data.Contract;
 import com.example.alex.yandextranslator.model.HistoryFavorites;
-import com.example.alex.yandextranslator.model.language.Language;
+import com.example.alex.yandextranslator.model.Language;
 
 import java.util.ArrayList;
 
@@ -15,13 +13,10 @@ import java.util.ArrayList;
  */
 
 public class CursorAdapter {
-    private final String LOG_TAG = this.getClass().getSimpleName();
-    private Context context;
     private ArrayList<Language> languageArrayList;
     private ArrayList<HistoryFavorites> historyFavoritesArrayList;
 
     public ArrayList<Language> getListToCursor(Cursor cursor){
-        Log.d(LOG_TAG, "Start getListToCursor");
         if (languageArrayList == null) {
             languageArrayList = new ArrayList<>();
         } else {
@@ -51,7 +46,6 @@ public class CursorAdapter {
     }
 
     public ArrayList<HistoryFavorites> getArrayListHistoryFavoritesToCursor(Cursor cursor){
-        Log.d(LOG_TAG, "Start getArrayListHistoryFavoritesToCursor");
         if (historyFavoritesArrayList == null) {
             historyFavoritesArrayList = new ArrayList<>();
         } else {

@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.example.alex.yandextranslator.data.Contract;
 import com.example.alex.yandextranslator.helper.DBHelper;
@@ -29,11 +28,8 @@ import static com.example.alex.yandextranslator.data.Contract.Language.TYPE_LANG
  */
 
 public class YandexTranslatorProvider extends ContentProvider {
-    private final String LOG_TAG = YandexTranslatorProvider.class.getSimpleName();
-
     private static final int URI_MATCHER_LANGUAGE_ALL_ROWS = 1000;
     private static final int URI_MATCHER_LANGUAGE_SINGLE_ROW = 1001;
-
     private static final int URI_MATCHER_HISTORY_FAVORITES_ALL_ROWS = 2000;
     private static final int URI_MATCHER_HISTORY_FAVORITES_SINGLE_ROW = 2001;
 
@@ -60,7 +56,6 @@ public class YandexTranslatorProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-//        Log.d(LOG_TAG, "onCreate");
         dbHelper = new DBHelper(getContext());
         return true;
     }
@@ -70,14 +65,10 @@ public class YandexTranslatorProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection,
                         @Nullable String selection, @Nullable String[] selectionArgs,
                         @Nullable String sortOrder) {
-//        Log.d(LOG_TAG, "Start query");
-
         String rowIdLanguage, rowIdHistoryFavorites;
         String table_name = "";
 
         openDatabase();
-
-//        Log.d(LOG_TAG, "query uriMatcher.match(uri) = " + uriMatcher.match(uri));
 
         switch (uriMatcher.match(uri)) {
             case URI_MATCHER_LANGUAGE_ALL_ROWS:
@@ -116,19 +107,14 @@ public class YandexTranslatorProvider extends ContentProvider {
         try {
             cursor.setNotificationUri(getContext().getContentResolver(), uri);
         } catch (NullPointerException e) {
-            Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
-        } finally {
-//            database.close();
-//            dbHelper.close();
+            e.printStackTrace();
         }
-//        Log.d(LOG_TAG, "cursor = " + cursor.toString());
         return cursor;
     }
 
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-//        Log.d(LOG_TAG, "getType, " + uri.toString());
         switch (uriMatcher.match(uri)) {
             case URI_MATCHER_LANGUAGE_SINGLE_ROW:
                 return TYPE_LANGUAGE_SINGLE_ROW;
@@ -147,16 +133,8 @@ public class YandexTranslatorProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-//        Log.d(LOG_TAG, "Start insert");
-//        Log.d(LOG_TAG, " insert uriMatcher.match(uri) = " + uriMatcher.match(uri));
-
-//        if (uriMatcher.match(uri) != URI_MATCHER_LANGUAGE_SINGLE_ROW) { //проверка, если вставка больше чем 1 элемент -> ошибка
-//            throwIllegalArgumentException(uri);
-//        }
         long rowIDLanguage, rowIDHistoryFavorites;
-
         String table_name = "";
-
         Uri resultUri = null;
 
         openDatabase();
@@ -176,24 +154,16 @@ public class YandexTranslatorProvider extends ContentProvider {
         try {
             getContext().getContentResolver().notifyChange(resultUri, null);
         } catch (NullPointerException e) {
-            Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
-        } finally {
-//            database.close();
-//            dbHelper.close();
+            e.printStackTrace();
         }
-
         return resultUri;
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-//        Log.d(LOG_TAG, "Start delete");
-//        Log.d(LOG_TAG, "delete uriMatcher.match(uri) = " + uriMatcher.match(uri));
-
+    public int delete(@NonNull Uri uri, @Nullable String selection,
+                      @Nullable String[] selectionArgs) {
         String rowIDLanguage, rowIDHistoryFavorites;
-
         int countRowsDelete = -1;
-
         String table_name = "";
 
         openDatabase();
@@ -232,26 +202,18 @@ public class YandexTranslatorProvider extends ContentProvider {
             default:
                 throwIllegalArgumentException(uri);
         }
-
         try {
             getContext().getContentResolver().notifyChange(uri, null);
         } catch (NullPointerException e) {
-            Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
-        } finally {
-//            database.close();
-//            dbHelper.close();
+            e.printStackTrace();
         }
-
         return countRowsDelete;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values,
                       @Nullable String selection, @Nullable String[] selectionArgs) {
-//        Log.d(LOG_TAG, "Start delete");
-//        Log.d(LOG_TAG, "query, " + uri.toString());
         String rowIDLanguage, rowIDHistoryFavorites;
-
         String table_name = "";
 
         openDatabase();
@@ -289,16 +251,11 @@ public class YandexTranslatorProvider extends ContentProvider {
         }
 
         int countRowsUpdate = database.update(table_name, values, selection, selectionArgs);
-        Log.d(LOG_TAG, "countRowsUpdate = " + countRowsUpdate);
         try {
             getContext().getContentResolver().notifyChange(uri, null);
         } catch (NullPointerException e) {
-            Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
-        } finally {
-//            database.close();
-//            dbHelper.close();
+            e.printStackTrace();
         }
-
         return countRowsUpdate;
     }
 

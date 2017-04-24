@@ -1,8 +1,6 @@
 package com.example.alex.yandextranslator.adapter;
 
-import android.util.Log;
-
-import com.example.alex.yandextranslator.model.language.Language;
+import com.example.alex.yandextranslator.model.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -14,7 +12,6 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,18 +19,16 @@ import java.util.Map;
  */
 
 public class LanguageDictionareAdapter implements JsonDeserializer<LanguageDictionare> {
-    private final String LOG_TAG = this.getClass().getSimpleName();
 
     @Override
     public LanguageDictionare deserialize(JsonElement jsonElement, Type typeOfT,
                                    JsonDeserializationContext context)
             throws JsonParseException {
-        Log.d(LOG_TAG, "Start deserialize");
-
         ArrayList<String> listDirs = new ArrayList<>();
 
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         JsonArray dirs = jsonObject.getAsJsonArray("dirs");
+        /*имя dirs приходит в ответе переводчика*/
         for (JsonElement dir: dirs){
             listDirs.add(dir.getAsString());
         }
@@ -41,6 +36,7 @@ public class LanguageDictionareAdapter implements JsonDeserializer<LanguageDicti
         ArrayList<Language> listLanguage = new ArrayList<>();
 
         JsonObject jsonObjectLang = jsonObject.get("langs").getAsJsonObject();
+        /*имя langs приходит в ответе переводчика*/
 
         for (Map.Entry<String, JsonElement> entry:jsonObjectLang.entrySet()
              ) {

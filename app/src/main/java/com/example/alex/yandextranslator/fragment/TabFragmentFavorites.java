@@ -11,7 +11,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +20,6 @@ import com.example.alex.yandextranslator.App;
 import com.example.alex.yandextranslator.R;
 import com.example.alex.yandextranslator.adapter.RecyclerViewFavoriteAdapter;
 import com.example.alex.yandextranslator.data.Contract;
-import com.example.alex.yandextranslator.model.HistoryFavorites;
-
-import java.util.ArrayList;
 
 /**
  * Created by alex on 20.04.17.
@@ -31,8 +27,6 @@ import java.util.ArrayList;
 
 public class TabFragmentFavorites extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
-    private final String LOG_TAG = this.getClass().getSimpleName();
-
     private EditText editTextSearch;
     private RecyclerView recyclerViewFavorite;
     private RecyclerViewFavoriteAdapter adapter;
@@ -43,16 +37,14 @@ public class TabFragmentFavorites extends Fragment implements
 
     @Override
     public void onAttach(Context context) {
-        Log.d(LOG_TAG, "Start onAttach");
         super.onAttach(context);
         app = ((App)getActivity().getApplicationContext());
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "Start onCreateView");
-
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.favorite_tab_fragment_layout, container, false);
 
         initView(view);
@@ -74,9 +66,6 @@ public class TabFragmentFavorites extends Fragment implements
     }
 
     private void initRecyclerView(){
-        Log.d(LOG_TAG, "Start initRecyclerView");
-        ArrayList<HistoryFavorites> arrayList = app.getHistoryFavoritesArrayList();
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         adapter = new RecyclerViewFavoriteAdapter(getActivity(), null);
@@ -117,7 +106,6 @@ public class TabFragmentFavorites extends Fragment implements
     }
 
     private String getTextInEditText(EditText editText){
-        Log.d(LOG_TAG, "Start getEditText");
         String text = editText.getText().toString();
         if (text.length() == 0) text = "";
         return text;

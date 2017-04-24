@@ -11,14 +11,6 @@ public class HistoryFavorites {
     private String translationDirection;
     private boolean favorite;
 
-    public HistoryFavorites(String translatableText, String translatedText,
-                            String translationDirection, boolean favorite) {
-        this.translatableText = translatableText;
-        this.translatedText = translatedText;
-        this.translationDirection = translationDirection;
-        this.favorite = favorite;
-    }
-
     public HistoryFavorites(int id, String translatableText, String translatedText,
                             String translationDirection, boolean favorite) {
         this.id = id;

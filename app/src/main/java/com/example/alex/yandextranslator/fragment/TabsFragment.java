@@ -3,6 +3,7 @@ package com.example.alex.yandextranslator.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,6 @@ public class TabsFragment extends Fragment {
                 new TabItem(fragmentTranslator, nameTabTranslator),
                 new TabItem(fragmentHistory, nameTabHistory),
                 new TabItem(fragmentFavorites, nameTabFavorites)
-        ).Build();
+        ).setTabsBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorTabs)).Build();
     }
 }
