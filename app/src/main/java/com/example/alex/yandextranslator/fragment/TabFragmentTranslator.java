@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -15,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.example.alex.yandextranslator.App;
@@ -54,10 +57,13 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     private final String LOG_TAG = this.getClass().getSimpleName();
     public static final int CHANGE_DATE = 1;
 
+    private final int PART_OF_SPEECH = 100;
+
     private TextView textViewTranslate;
     private TextView textViewLanguageText, textViewRevers, textViewLanguageTranslation;
     private EditText editText;
     private Button button;
+    private LinearLayout linearLayout;
 
     private App app;
 
@@ -155,11 +161,15 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
         Log.d(LOG_TAG, "Start initView");
         editText = (EditText)view.findViewById(R.id.edit_text);
         button = (Button)view.findViewById(R.id.button);
+        linearLayout = (LinearLayout)view.findViewById(R.id.linear_layout_translate);
         textViewTranslate = (TextView)view.findViewById(R.id.text_view_translate);
+
+
         textViewLanguageText = (TextView)view.findViewById(R.id.text_view_language_text);
         textViewRevers = (TextView)view.findViewById(R.id.text_view_revers);
         textViewRevers.setText(R.string.revers);
         textViewLanguageTranslation = (TextView)view.findViewById(R.id.text_view_language_translator);
+
     }
 
     private void setIntiTextViewSelectLanguage(){
@@ -244,80 +254,88 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                         List<Def> defList = response.body().getDef();
                         Log.d(LOG_TAG, "def.size = " + defList.size());
 
-                        for (Def item:defList
-                             ) {
-                            item.getText();
-                            Log.d(LOG_TAG, "Text = " + item.getText());
-                            item.getPos();
-                            Log.d(LOG_TAG, "Pos = " + item.getPos());
-                            List<Tr> trList = item.getTr();
-                            Log.d(LOG_TAG, "trList.size = " + trList.size());
+                        if (defList.size() != 0) {
 
-                            for (Tr itemTr:trList
-                                 ) {
-                                itemTr.getPos();
-                                Log.d(LOG_TAG, "Tr Pos = " + itemTr.getPos());
+                            for (Def item : defList
+                                    ) {
+                                item.getText();
+                                Log.d(LOG_TAG, "Text = " + item.getText());
+                                item.getPos();
 
-                                itemTr.getText();
-                                Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
+                                addTextView(PART_OF_SPEECH, item.getPos());
 
-                                List<Ex> exList = itemTr.getEx();
-                                if (exList != null) {
-                                    Log.d(LOG_TAG, "exList.size = " + exList.size());
+                                Log.d(LOG_TAG, "Pos = " + item.getPos());
+                                List<Tr> trList = item.getTr();
+                                Log.d(LOG_TAG, "trList.size = " + trList.size());
 
-                                    for (Ex itemEx:exList
-                                         ) {
-                                        itemEx.getText();
-                                        Log.d(LOG_TAG, "Ex Text = " + itemEx.getText());
+                                for (Tr itemTr : trList
+                                        ) {
+                                    itemTr.getPos();
+                                    Log.d(LOG_TAG, "Tr Pos = " + itemTr.getPos());
 
-                                        List<Tr_> tr_List = itemEx.getTr();
-                                        if (tr_List != null){
-                                            Log.d(LOG_TAG, "tr_List.size = " + tr_List.size());
+                                    itemTr.getText();
+                                    Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
 
-                                            for (Tr_ itemTr_:tr_List
-                                                 ) {
-                                                itemTr_.getText();
-                                                Log.d(LOG_TAG, "tr_ Text = " + itemTr_.getText());
+                                    List<Ex> exList = itemTr.getEx();
+                                    if (exList != null) {
+                                        Log.d(LOG_TAG, "exList.size = " + exList.size());
+
+                                        for (Ex itemEx : exList
+                                                ) {
+                                            itemEx.getText();
+                                            Log.d(LOG_TAG, "Ex Text = " + itemEx.getText());
+
+                                            List<Tr_> tr_List = itemEx.getTr();
+                                            if (tr_List != null) {
+                                                Log.d(LOG_TAG, "tr_List.size = " + tr_List.size());
+
+                                                for (Tr_ itemTr_ : tr_List
+                                                        ) {
+                                                    itemTr_.getText();
+                                                    Log.d(LOG_TAG, "tr_ Text = " + itemTr_.getText());
+                                                }
+
+                                            } else {
+                                                Log.d(LOG_TAG, "tr_List is null " + (tr_List == null));
                                             }
-
-                                        } else {
-                                            Log.d(LOG_TAG, "tr_List is null " + (tr_List == null));
                                         }
+
+                                    } else {
+                                        Log.d(LOG_TAG, "exList it null " + (exList == null));
                                     }
 
-                                } else {
-                                    Log.d(LOG_TAG, "exList it null " + (exList == null));
-                                }
+                                    List<Mean> meanList = itemTr.getMean();
+                                    if (meanList != null) {
+                                        Log.d(LOG_TAG, "meanList.size = " + meanList.size());
 
-                                List<Mean> meanList = itemTr.getMean();
-                                if (meanList != null) {
-                                    Log.d(LOG_TAG, "meanList.size = " + meanList.size());
+                                        for (Mean itemMean : meanList
+                                                ) {
+                                            itemMean.getText();
+                                            Log.d(LOG_TAG, "mean Text = " + itemMean.getText());
+                                        }
 
-                                    for (Mean itemMean:meanList
-                                         ) {
-                                        itemMean.getText();
-                                        Log.d(LOG_TAG, "mean Text = " + itemMean.getText());
+                                    } else {
+                                        Log.d(LOG_TAG, "meanList is null " + (meanList == null));
                                     }
 
-                                } else {
-                                    Log.d(LOG_TAG, "meanList is null " + (meanList == null));
-                                }
+                                    List<Syn> synList = itemTr.getSyn();
+                                    if (synList != null) {
+                                        Log.d(LOG_TAG, "synList.size = " + synList.size());
 
-                                List<Syn> synList = itemTr.getSyn();
-                                if (synList != null) {
-                                    Log.d(LOG_TAG, "synList.size = " + synList.size());
+                                        for (Syn itemSyn : synList
+                                                ) {
+                                            itemSyn.getText();
+                                            Log.d(LOG_TAG, "syn Text = " + itemSyn.getText());
+                                        }
 
-                                    for (Syn itemSyn:synList
-                                         ) {
-                                        itemSyn.getText();
-                                        Log.d(LOG_TAG, "syn Text = " + itemSyn.getText());
+                                    } else {
+                                        Log.d(LOG_TAG, "synList is null " + (synList == null));
                                     }
 
-                                } else {
-                                    Log.d(LOG_TAG, "synList is null " + (synList == null));
                                 }
-
                             }
+                        } else {
+                            // приходит пустой ответ без перевода.
                         }
 
                         String textTranslator = mapJson.get("text");
@@ -327,7 +345,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                     } else {
                         responseTranslator = getString(R.string.error_invalid_responce);
                     }
-                    textViewTranslate.setText(responseTranslator);
+//                    textViewTranslate.setText(responseTranslator);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d(LOG_TAG, "exeption onResponce " + e.toString());
@@ -341,6 +359,29 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 //TODO написать обработку ошибок
             }
         });
+    }
+
+    private void addTextView(int key, final String text){
+        Log.d(LOG_TAG, "Start addTextView");
+        switch (key){
+            case PART_OF_SPEECH:
+                TextView tvTest = new TextView(getActivity());
+                tvTest.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+                tvTest.setTextAppearance(getActivity(), R.style.PartOfSpeech);
+                if (text.equals(getString(R.string.adjective_en))){
+                    tvTest.setText(getString(R.string.adjective_ru));
+                } else if (text.equals(getString(R.string.noun_en))){
+                    tvTest.setText(getString(R.string.noun_ru));
+                } else if (text.equals(getString(R.string.verb_en))){
+                    tvTest.setText(getString(R.string.verb_ru));
+                }
+                linearLayout.addView(tvTest);
+                break;
+        }
+
+
     }
 
 //    public void responseTranslator(Map<String, String> mapJson) {

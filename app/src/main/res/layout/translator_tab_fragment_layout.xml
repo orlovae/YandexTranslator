@@ -43,9 +43,18 @@
         android:layout_height="wrap_content"
         android:hint="Перевести"/>
 
-    <TextView
-        android:id="@+id/text_view_translate"
+    <LinearLayout
+        android:id="@+id/linear_layout_translate"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/text_view_translate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+    </LinearLayout>
 
 </LinearLayout>

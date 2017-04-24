@@ -10,4 +10,13 @@
     <string name="select_favorites">&#9829;</string>
     <string name="un_select_favorites">&#9825;</string>
     <string name="loop_search">&#128269;</string>
+    
+    <!-- Части речи -->
+    <string name="verb_ru">глагол</string>
+    <string name="noun_ru">существительное</string>
+    <string name="adjective_ru">прилагательное</string>
+    <string name="verb_en">verb</string>
+    <string name="noun_en">noun</string>
+    <string name="adjective_en">adjective</string>
+
 </resources>
