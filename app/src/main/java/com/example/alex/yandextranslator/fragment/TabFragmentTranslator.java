@@ -24,12 +24,19 @@ import com.example.alex.yandextranslator.data.Contract;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.example.alex.yandextranslator.model.response.Translator;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Def;
 import com.example.alex.yandextranslator.model.response.dictionaryentry.DictionaryEntry;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Ex;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Mean;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Syn;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Tr;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Tr_;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiDictionaryEntry;
 import com.example.alex.yandextranslator.rest.ApiTranslator;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -233,6 +240,86 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                     String responseTranslator;
                     if (response.isSuccessful()){
                         responseTranslator = response.body().toString();
+
+                        List<Def> defList = response.body().getDef();
+                        Log.d(LOG_TAG, "def.size = " + defList.size());
+
+                        for (Def item:defList
+                             ) {
+                            item.getText();
+                            Log.d(LOG_TAG, "Text = " + item.getText());
+                            item.getPos();
+                            Log.d(LOG_TAG, "Pos = " + item.getPos());
+                            List<Tr> trList = item.getTr();
+                            Log.d(LOG_TAG, "trList.size = " + trList.size());
+
+                            for (Tr itemTr:trList
+                                 ) {
+                                itemTr.getPos();
+                                Log.d(LOG_TAG, "Tr Pos = " + itemTr.getPos());
+
+                                itemTr.getText();
+                                Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
+
+                                List<Ex> exList = itemTr.getEx();
+                                if (exList != null) {
+                                    Log.d(LOG_TAG, "exList.size = " + exList.size());
+
+                                    for (Ex itemEx:exList
+                                         ) {
+                                        itemEx.getText();
+                                        Log.d(LOG_TAG, "Ex Text = " + itemEx.getText());
+
+                                        List<Tr_> tr_List = itemEx.getTr();
+                                        if (tr_List != null){
+                                            Log.d(LOG_TAG, "tr_List.size = " + tr_List.size());
+
+                                            for (Tr_ itemTr_:tr_List
+                                                 ) {
+                                                itemTr_.getText();
+                                                Log.d(LOG_TAG, "tr_ Text = " + itemTr_.getText());
+                                            }
+
+                                        } else {
+                                            Log.d(LOG_TAG, "tr_List is null " + (tr_List == null));
+                                        }
+                                    }
+
+                                } else {
+                                    Log.d(LOG_TAG, "exList it null " + (exList == null));
+                                }
+
+                                List<Mean> meanList = itemTr.getMean();
+                                if (meanList != null) {
+                                    Log.d(LOG_TAG, "meanList.size = " + meanList.size());
+
+                                    for (Mean itemMean:meanList
+                                         ) {
+                                        itemMean.getText();
+                                        Log.d(LOG_TAG, "mean Text = " + itemMean.getText());
+                                    }
+
+                                } else {
+                                    Log.d(LOG_TAG, "meanList is null " + (meanList == null));
+                                }
+
+                                List<Syn> synList = itemTr.getSyn();
+                                if (synList != null) {
+                                    Log.d(LOG_TAG, "synList.size = " + synList.size());
+
+                                    for (Syn itemSyn:synList
+                                         ) {
+                                        itemSyn.getText();
+                                        Log.d(LOG_TAG, "syn Text = " + itemSyn.getText());
+                                    }
+
+                                } else {
+                                    Log.d(LOG_TAG, "synList is null " + (synList == null));
+                                }
+
+                            }
+                        }
+
                         String textTranslator = mapJson.get("text");
                         String translationDirection = mapJson.get("lang");
 //                        app.addToHistoryFavoritesTable(textTranslator, responseTranslator,
