@@ -61,6 +61,10 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     private final int PART_OF_SPEECH = 100;
     private final int TRANSLATE = 200;
     private final int MEAN = 300;
+    private final int EX = 400;
+
+    private final int MARGIN_LEFT_MEAN = 30;
+    private final int MARGIN_LEFT_EX = 50;
 
     private TextView textViewTranslate;
     private TextView textViewLanguageText, textViewRevers, textViewLanguageTranslation;
@@ -326,18 +330,25 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                                         for (Ex itemEx : exList
                                                 ) {
-                                            itemEx.getText();
+                                            String ex = itemEx.getText() + " " +
+                                                    getActivity().getString(R.string.tire) + " ";
                                             Log.d(LOG_TAG, "Ex Text = " + itemEx.getText());
 
                                             List<Tr_> tr_List = itemEx.getTr();
                                             if (tr_List != null) {
                                                 Log.d(LOG_TAG, "tr_List.size = " + tr_List.size());
 
+                                                String tr_ = "";
+
                                                 for (Tr_ itemTr_ : tr_List
                                                         ) {
-                                                    itemTr_.getText();
+                                                    tr_ = tr_ + itemTr_.getText();
                                                     Log.d(LOG_TAG, "tr_ Text = " + itemTr_.getText());
                                                 }
+
+                                                ex = ex + tr_;
+
+                                                addTextView(EX, 0, ex);
 
                                             } else {
                                                 Log.d(LOG_TAG, "tr_List is null " + (tr_List == null));
@@ -442,10 +453,12 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
             case MEAN:
                 Log.d(LOG_TAG, "Start addTextView|MEAN");
 
+                LayoutParams layoutParamsMean = new LayoutParams(LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT);
+                layoutParamsMean.setMargins(MARGIN_LEFT_MEAN, 0, 0, 0);
+
                 TextView tvMean = new TextView(getActivity());
-                tvMean.setLayoutParams(new LayoutParams(
-                        LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT));
+                tvMean.setLayoutParams(layoutParamsMean);
 
                 if (Build.VERSION.SDK_INT < 23) {
                     tvMean.setTextAppearance(getActivity(), R.style.Mean);
@@ -456,6 +469,26 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 tvMean.setText(text);
 
                 linearLayout.addView(tvMean);
+                break;
+            case EX:
+                Log.d(LOG_TAG, "Start addTextView|EX");
+
+                LayoutParams layoutParamsEx = new LayoutParams(LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT);
+                layoutParamsEx.setMargins(MARGIN_LEFT_EX, 0, 0, 0);
+
+                TextView tvEx = new TextView(getActivity());
+                tvEx.setLayoutParams(layoutParamsEx);
+
+                if (Build.VERSION.SDK_INT < 23) {
+                    tvEx.setTextAppearance(getActivity(), R.style.Ex);
+                } else {
+                    tvEx.setTextAppearance(R.style.Ex);
+                }
+
+                tvEx.setText(text);
+
+                linearLayout.addView(tvEx);
                 break;
 
         }

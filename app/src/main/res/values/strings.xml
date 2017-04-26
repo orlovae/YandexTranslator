@@ -10,6 +10,8 @@
     <string name="select_favorites">&#9829;</string>
     <string name="un_select_favorites">&#9825;</string>
     <string name="loop_search">&#128269;</string>
+    <string name="tire">&#8212;</string>
+
     
     <!-- Части речи -->
     <string name="verb_ru">глагол</string>
