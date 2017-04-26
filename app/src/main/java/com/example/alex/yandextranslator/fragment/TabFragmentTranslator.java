@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -58,6 +59,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     public static final int CHANGE_DATE = 1;
 
     private final int PART_OF_SPEECH = 100;
+    private final int TRANSLATE = 200;
 
     private TextView textViewTranslate;
     private TextView textViewLanguageText, textViewRevers, textViewLanguageTranslation;
@@ -262,12 +264,13 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                                 Log.d(LOG_TAG, "Text = " + item.getText());
                                 item.getPos();
 
-                                addTextView(PART_OF_SPEECH, item.getPos());
+                                addTextView(PART_OF_SPEECH, 0, item.getPos());
 
                                 Log.d(LOG_TAG, "Pos = " + item.getPos());
                                 List<Tr> trList = item.getTr();
                                 Log.d(LOG_TAG, "trList.size = " + trList.size());
 
+                                int countTrList = 0;
                                 for (Tr itemTr : trList
                                         ) {
                                     itemTr.getPos();
@@ -275,6 +278,10 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                                     itemTr.getText();
                                     Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
+
+                                    countTrList++;
+
+                                    addTextView(TRANSLATE, countTrList, itemTr.getText());
 
                                     List<Ex> exList = itemTr.getEx();
                                     if (exList != null) {
@@ -361,24 +368,70 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
         });
     }
 
-    private void addTextView(int key, final String text){
+    private void addTextView(int key, int count, final String text){
         Log.d(LOG_TAG, "Start addTextView");
         switch (key){
             case PART_OF_SPEECH:
-                TextView tvTest = new TextView(getActivity());
-                tvTest.setLayoutParams(new LayoutParams(
+                Log.d(LOG_TAG, "Start addTextView|PART_OF_SPEECH");
+
+                TextView tvPos = new TextView(getActivity());
+                tvPos.setLayoutParams(new LayoutParams(
                         LayoutParams.MATCH_PARENT,
                         LayoutParams.WRAP_CONTENT));
-                tvTest.setTextAppearance(getActivity(), R.style.PartOfSpeech);
-                if (text.equals(getString(R.string.adjective_en))){
-                    tvTest.setText(getString(R.string.adjective_ru));
-                } else if (text.equals(getString(R.string.noun_en))){
-                    tvTest.setText(getString(R.string.noun_ru));
-                } else if (text.equals(getString(R.string.verb_en))){
-                    tvTest.setText(getString(R.string.verb_ru));
+
+                if (Build.VERSION.SDK_INT < 23) {
+                    tvPos.setTextAppearance(getActivity(), R.style.PartOfSpeech);
+                } else {
+                    tvPos.setTextAppearance(R.style.PartOfSpeech);
                 }
-                linearLayout.addView(tvTest);
+
+
+                if (text.equals(getString(R.string.adjective_en))){
+                    tvPos.setText(getString(R.string.adjective_ru));
+                } else if (text.equals(getString(R.string.noun_en))){
+                    tvPos.setText(getString(R.string.noun_ru));
+                } else if (text.equals(getString(R.string.verb_en))){
+                    tvPos.setText(getString(R.string.verb_ru));
+                }
+                linearLayout.addView(tvPos);
                 break;
+            case TRANSLATE:
+                Log.d(LOG_TAG, "Start addTextView|TRANSLATE");
+                LinearLayout linearLayoutTranslate = new LinearLayout(getActivity());
+                linearLayoutTranslate.setOrientation(LinearLayout.HORIZONTAL);
+                linearLayoutTranslate.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+
+                TextView tvCountTranslate = new TextView(getActivity());
+                tvCountTranslate.setLayoutParams(new LayoutParams(
+                        LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT));
+
+                if (Build.VERSION.SDK_INT < 23) {
+                    tvCountTranslate.setTextAppearance(getActivity(), R.style.TranslateCount);
+                } else {
+                    tvCountTranslate.setTextAppearance(R.style.TranslateCount);
+                }
+                tvCountTranslate.setText(count + "  "); /*два пробела нужны для формирования отступа
+                после цифры*/
+                linearLayoutTranslate.addView(tvCountTranslate);
+
+                TextView tvTranslate = new TextView(getActivity());
+                tvTranslate.setLayoutParams(new LayoutParams(
+                        LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT));
+
+                if (Build.VERSION.SDK_INT < 23) {
+                    tvTranslate.setTextAppearance(getActivity(), R.style.Translate);
+                } else {
+                    tvTranslate.setTextAppearance(R.style.Translate);
+                }
+                tvTranslate.setText(text);
+                linearLayoutTranslate.addView(tvTranslate);
+                linearLayout.addView(linearLayoutTranslate);
+                break;
+
         }
 
 
