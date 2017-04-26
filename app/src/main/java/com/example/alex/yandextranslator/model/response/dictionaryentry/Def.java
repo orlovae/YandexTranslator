@@ -18,9 +18,13 @@ public class Def {
     @SerializedName("pos")
     @Expose
     private String pos;
+    @SerializedName("ts")
+    @Expose
+    private String ts;
     @SerializedName("tr")
     @Expose
     private List<Tr> tr = null;
+
 
     public String getText() {
         return text;
@@ -38,6 +42,14 @@ public class Def {
         this.pos = pos;
     }
 
+    public String getTs() {
+        return ts;
+    }
+
+    public void setTs(String ts) {
+        this.ts = ts;
+    }
+
     public List<Tr> getTr() {
         return tr;
     }
@@ -48,7 +60,7 @@ public class Def {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(text).append(pos).append(tr).toHashCode();
+        return new HashCodeBuilder().append(text).append(pos).append(ts).append(tr).toHashCode();
     }
 
     @Override
@@ -60,6 +72,6 @@ public class Def {
             return false;
         }
         Def rhs = ((Def) other);
-        return new EqualsBuilder().append(text, rhs.text).append(pos, rhs.pos).append(tr, rhs.tr).isEquals();
+        return new EqualsBuilder().append(text, rhs.text).append(pos, rhs.pos).append(ts, rhs.ts).append(tr, rhs.tr).isEquals();
     }
 }

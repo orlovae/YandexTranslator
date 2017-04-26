@@ -1,14 +1,12 @@
 package com.example.alex.yandextranslator.fragment;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -24,10 +22,8 @@ import android.widget.TextView;
 import com.example.alex.yandextranslator.App;
 import com.example.alex.yandextranslator.DialogLanguageSelect;
 import com.example.alex.yandextranslator.R;
-import com.example.alex.yandextranslator.data.Contract;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
-import com.example.alex.yandextranslator.model.response.Translator;
 import com.example.alex.yandextranslator.model.response.dictionaryentry.Def;
 import com.example.alex.yandextranslator.model.response.dictionaryentry.DictionaryEntry;
 import com.example.alex.yandextranslator.model.response.dictionaryentry.Ex;
@@ -37,7 +33,6 @@ import com.example.alex.yandextranslator.model.response.dictionaryentry.Tr;
 import com.example.alex.yandextranslator.model.response.dictionaryentry.Tr_;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiDictionaryEntry;
-import com.example.alex.yandextranslator.rest.ApiTranslator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +53,12 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     private final String LOG_TAG = this.getClass().getSimpleName();
     public static final int CHANGE_DATE = 1;
 
-    private final int PART_OF_SPEECH = 100;
-    private final int TRANSLATE = 200;
-    private final int MEAN = 300;
-    private final int EX = 400;
+    private final int KEY_API_DICTIONARY_TEXT = 100;
+    private final int KEY_API_DICTIONARY_TS = 200;
+    private final int KEY_API_DICTIONARY_PART_OF_SPEECH = 300;
+    private final int KEY_API_DICTIONARY_TRANSLATE = 400;
+    private final int KEY_API_DICTIONARY_MEAN = 500;
+    private final int KEY_API_DICTIONARY_EX = 600;
 
     private final int MARGIN_LEFT_MEAN = 30;
     private final int MARGIN_LEFT_EX = 50;
@@ -267,11 +264,19 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                                     ) {
                                 item.getText();
                                 Log.d(LOG_TAG, "Text = " + item.getText());
+                                addTextView(KEY_API_DICTIONARY_TEXT, 0, item.getText());
+                                
+                                String ts = getActivity().getString()
+                                            + item.getTs()
+                                            + getActivity().getString();//TODO сделать подстановку в стринг
+                                Log.d(LOG_TAG, "Ts = " + item.getTs());
+                                addTextView(KEY_API_DICTIONARY_TS, 0, item.getTs());
+                                
                                 item.getPos();
-
-                                addTextView(PART_OF_SPEECH, 0, item.getPos());
-
                                 Log.d(LOG_TAG, "Pos = " + item.getPos());
+
+                                addTextView(KEY_API_DICTIONARY_PART_OF_SPEECH, 0, item.getPos());
+
                                 List<Tr> trList = item.getTr();
                                 Log.d(LOG_TAG, "trList.size = " + trList.size());
 
@@ -300,7 +305,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                                         Log.d(LOG_TAG, "synList is null " + (synList == null));
                                     }
                                     countTrList++;
-                                    addTextView(TRANSLATE, countTrList, massiveSyn);
+                                    addTextView(KEY_API_DICTIONARY_TRANSLATE, countTrList, massiveSyn);
 
                                     String massiveMean = "(";
 
@@ -318,7 +323,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                                                         .getText() + ", ";
                                             }
                                         }
-                                        addTextView(MEAN, 0, massiveMean);
+                                        addTextView(KEY_API_DICTIONARY_MEAN, 0, massiveMean);
 
                                     } else {
                                         Log.d(LOG_TAG, "meanList is null " + (meanList == null));
@@ -348,7 +353,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                                                 ex = ex + tr_;
 
-                                                addTextView(EX, 0, ex);
+                                                addTextView(KEY_API_DICTIONARY_EX, 0, ex);
 
                                             } else {
                                                 Log.d(LOG_TAG, "tr_List is null " + (tr_List == null));
@@ -390,7 +395,24 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
     private void addTextView(int key, int count, final String text){
         Log.d(LOG_TAG, "Start addTextView");
         switch (key){
-            case PART_OF_SPEECH:
+            case KEY_API_DICTIONARY_TS:
+                Log.d(LOG_TAG, "Start addTextView|TS");
+
+                TextView tvTs = new TextView(getActivity());
+                tvTs.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+
+                if (Build.VERSION.SDK_INT < 23) {
+                    tvTs.setTextAppearance(getActivity(), R.style.Ts);
+                } else {
+                    tvTs.setTextAppearance(R.style.Ts);
+                }
+
+                tvTs.setText(text);
+                linearLayout.addView(tvTs);
+                break;
+            case KEY_API_DICTIONARY_PART_OF_SPEECH:
                 Log.d(LOG_TAG, "Start addTextView|PART_OF_SPEECH");
 
                 TextView tvPos = new TextView(getActivity());
@@ -414,7 +436,8 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 }
                 linearLayout.addView(tvPos);
                 break;
-            case TRANSLATE:
+
+            case KEY_API_DICTIONARY_TRANSLATE:
                 Log.d(LOG_TAG, "Start addTextView|TRANSLATE");
                 LinearLayout linearLayoutTranslate = new LinearLayout(getActivity());
                 linearLayoutTranslate.setOrientation(LinearLayout.HORIZONTAL);
@@ -450,7 +473,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 linearLayoutTranslate.addView(tvTranslate);
                 linearLayout.addView(linearLayoutTranslate);
                 break;
-            case MEAN:
+            case KEY_API_DICTIONARY_MEAN:
                 Log.d(LOG_TAG, "Start addTextView|MEAN");
 
                 LayoutParams layoutParamsMean = new LayoutParams(LayoutParams.MATCH_PARENT,
@@ -470,7 +493,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                 linearLayout.addView(tvMean);
                 break;
-            case EX:
+            case KEY_API_DICTIONARY_EX:
                 Log.d(LOG_TAG, "Start addTextView|EX");
 
                 LayoutParams layoutParamsEx = new LayoutParams(LayoutParams.MATCH_PARENT,

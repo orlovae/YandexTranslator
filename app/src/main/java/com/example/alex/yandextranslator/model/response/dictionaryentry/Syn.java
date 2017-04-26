@@ -13,6 +13,9 @@ public class Syn {
     @SerializedName("text")
     @Expose
     private String text;
+    @SerializedName("gen")
+    @Expose
+    private String gen;
 
     public String getText() {
         return text;
@@ -22,9 +25,17 @@ public class Syn {
         this.text = text;
     }
 
+    public String getGen() {
+        return gen;
+    }
+
+    public void setGen(String gen) {
+        this.gen = gen;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(text).toHashCode();
+        return new HashCodeBuilder().append(text).append(gen).toHashCode();
     }
 
     @Override
@@ -36,6 +47,6 @@ public class Syn {
             return false;
         }
         Syn rhs = ((Syn) other);
-        return new EqualsBuilder().append(text, rhs.text).isEquals();
+        return new EqualsBuilder().append(text, rhs.text).append(gen, rhs.gen).isEquals();
     }
 }

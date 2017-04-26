@@ -12,13 +12,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Tr {
 
-
     @SerializedName("text")
     @Expose
     private String text;
-    @SerializedName("pos")
+    @SerializedName("gen")
     @Expose
-    private String pos;
+    private String gen;
     @SerializedName("syn")
     @Expose
     private List<Syn> syn = null;
@@ -37,12 +36,12 @@ public class Tr {
         this.text = text;
     }
 
-    public String getPos() {
-        return pos;
+    public String getGen() {
+        return gen;
     }
 
-    public void setPos(String pos) {
-        this.pos = pos;
+    public void setGen(String gen) {
+        this.gen = gen;
     }
 
     public List<Syn> getSyn() {
@@ -71,7 +70,7 @@ public class Tr {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(text).append(pos).append(syn).append(mean).append(ex).toHashCode();
+        return new HashCodeBuilder().append(text).append(gen).append(syn).append(mean).append(ex).toHashCode();
     }
 
     @Override
@@ -83,6 +82,6 @@ public class Tr {
             return false;
         }
         Tr rhs = ((Tr) other);
-        return new EqualsBuilder().append(text, rhs.text).append(pos, rhs.pos).append(syn, rhs.syn).append(mean, rhs.mean).append(ex, rhs.ex).isEquals();
+        return new EqualsBuilder().append(text, rhs.text).append(gen, rhs.gen).append(syn, rhs.syn).append(mean, rhs.mean).append(ex, rhs.ex).isEquals();
     }
 }
