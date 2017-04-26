@@ -3,13 +3,12 @@ package com.example.alex.yandextranslator;
 import android.app.Application;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.example.alex.yandextranslator.adapter.CursorAdapter;
 import com.example.alex.yandextranslator.adapter.LanguageDictionareAdapter;
 import com.example.alex.yandextranslator.data.Contract;
 import com.example.alex.yandextranslator.model.HistoryFavorites;
-import com.example.alex.yandextranslator.model.language.Language;
+import com.example.alex.yandextranslator.model.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDetection;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
 import com.example.alex.yandextranslator.rest.ApiClient;
@@ -33,8 +32,6 @@ import retrofit2.Response;
  */
 
 public class App extends Application {
-    private final String LOG_TAG = this.getClass().getSimpleName();
-
     private ApiTranslator apiTranslator;
     private ApiLanguageDetection apiLanguageDetection;
     private ApiDictionare apiDictionare;
@@ -49,7 +46,14 @@ public class App extends Application {
 
     private CursorAdapter cursorAdapter;
 
-    private final String KEY = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
+    private final String KEY_API_YANDEX_TRANSLATOR = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
+    public static final String KEY_MAP_JSON_DICTIONARE = "dictionare";
+    public static final String KEY_MAP_JSON_TRANSLATOR = "translator";
+    public static final String KEY_MAP_JSON_LANGUAGE_DETECTION = "languageDetection";
+    public static final String KEY_MAP_JSON_KEY = "key";
+    public static final String KEY_MAP_JSON_UI = "ui";
+    public static final String KEY_MAP_JSON_TEXT = "text";
+    public static final String KEY_MAP_JSON_LANG = "lang";
 
     public void setCodeLangToRequest(String[] codeLangToRequest) {
         this.codeLangToRequest = codeLangToRequest;
@@ -83,7 +87,6 @@ public class App extends Application {
     }
 
     public Map<String, String> createMapJson(String textToYandex, String key) {
-        Log.d(LOG_TAG, "Start createMapJson");
         if (mapJson == null) {
             mapJson = new HashMap<>();
         } else {
@@ -91,28 +94,20 @@ public class App extends Application {
         }
 
         switch (key) {
-            case "dictionare":
-//                Log.d(LOG_TAG, "Start createMapJson, case \"dictionare\"");
-                mapJson.put("key", KEY);
-                mapJson.put("ui", "ru");
-//                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
+            case KEY_MAP_JSON_DICTIONARE:
+                mapJson.put(KEY_MAP_JSON_KEY, KEY_API_YANDEX_TRANSLATOR);
+                mapJson.put(KEY_MAP_JSON_UI, "ru");
                 break;
-            case "languageDetection":
-//                Log.d(LOG_TAG, "Start createMapJson, case \"languageDetection\"");
-                mapJson.put("key", KEY);
-                mapJson.put("text", textToYandex);
-//                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
+            case KEY_MAP_JSON_LANGUAGE_DETECTION:
+                mapJson.put(KEY_MAP_JSON_KEY, KEY_API_YANDEX_TRANSLATOR);
+                mapJson.put(KEY_MAP_JSON_TEXT, textToYandex);
                 break;
-            case "translator":
-//                Log.d(LOG_TAG, "Start createMapJson, case \"translator\"");
-
+            case KEY_MAP_JSON_TRANSLATOR:
                 String lang = setLang(codeLangToRequest);
-                Log.d(LOG_TAG, "lang = " + lang);
 
-                mapJson.put("key", KEY);
-                mapJson.put("text", textToYandex);
-                mapJson.put("lang", lang);
-//                Log.d(LOG_TAG, "mapJson = " + mapJson.toString());
+                mapJson.put(KEY_MAP_JSON_KEY, KEY_API_YANDEX_TRANSLATOR);
+                mapJson.put(KEY_MAP_JSON_TEXT, textToYandex);
+                mapJson.put(KEY_MAP_JSON_LANG, lang);
                 break;
         }
         return mapJson;
@@ -157,6 +152,7 @@ public class App extends Application {
     }
 
     public void responseLanguageDetection(){
+        /*Пока данный метод не используется*/
         Call<LanguageDetection> call = apiLanguageDetection.languageDetection(mapJson);
 
         call.enqueue(new Callback<LanguageDetection>() {
@@ -165,26 +161,19 @@ public class App extends Application {
                 try {
                     if (response.isSuccessful()){
                         String lang = response.body().getLang();
-                    } else {
-                        //TODO написать обработку ошибок
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
-                    //TODO написать обработку ошибок
                 }
             }
-
             @Override
             public void onFailure(Call<LanguageDetection> call, Throwable t) {
-                //TODO написать обработку ошибок
+                t.printStackTrace();
             }
         });
     }
 
     public void initDataBase (LanguageDictionare languageDictionare){
-        Log.d(LOG_TAG, "Start initDataBase");
-
         Cursor cursor = getContentResolver().query(Contract.Language.CONTENT_URI,
                 null, null, null, null);
 
@@ -209,8 +198,6 @@ public class App extends Application {
     }
 
     private void createNewLanguageTable(ArrayList<Language> listLanguageFromResponse){
-        Log.d(LOG_TAG, "Start createNewLanguageTable");
-
         for (Language language : listLanguageFromResponse){
             ContentValues cv = new ContentValues();
             cv.put(Contract.Language.COLUMN_CODE_LANGUAGE, language.getCodeLanguage());
@@ -240,7 +227,6 @@ public class App extends Application {
 
     public void addToHistoryFavoritesTable(String textTranslator, String responseTranslator,
                                             String translationDirection, int favorites){
-        Log.d(LOG_TAG, "Start getcodeLanguageToRequest");
         String prepareResponseTranslator = responseTranslator.substring(1,
                 responseTranslator.length()-1);
         ContentValues cv = new ContentValues();
@@ -255,8 +241,7 @@ public class App extends Application {
     }
 
     private boolean checkDuplicationInHistory(String prepareResponseTranslator){
-        Log.d(LOG_TAG, "Start checkDuplicationInHistory");
-        String selection = Contract.HistoryFavorites.COLUMN_TRANSLATED_TEXT + "=?";
+        String selection = Contract.HistoryFavorites.COLUMN_TRANSLATED_TEXT + " = ?";
         String[] selectionArgs = {prepareResponseTranslator};
 
         Cursor cursor = getContentResolver().query(Contract.HistoryFavorites.CONTENT_URI,
@@ -270,12 +255,5 @@ public class App extends Application {
         } else {
             return false;
         }
-    }
-
-    public ArrayList<HistoryFavorites> getHistoryFavoritesArrayList(){
-        Cursor cursor = getContentResolver().query(Contract.HistoryFavorites.CONTENT_URI,
-                null, null, null, null);
-
-        return cursorAdapter.getArrayListHistoryFavoritesToCursor(cursor);
     }
 }

@@ -7,31 +7,30 @@ import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import java.util.Arrays;
+
+import static com.example.alex.yandextranslator.fragment.TabFragmentTranslator.KEY_BUNDLE_FOR_DIALOG_ID_TEXT_VIEW;
+import static com.example.alex.yandextranslator.fragment.TabFragmentTranslator.KEY_BUNDLE_FOR_DIALOG_LANGUAGE;
+import static com.example.alex.yandextranslator.fragment.TabFragmentTranslator.KEY_BUNDLE_FOR_DIALOG_LANGUAGE_SELECT;
 
 /**
  * Created by alex on 17.04.17.
  */
 
 public class DialogLanguageSelect extends DialogFragment {
-    private final String LOG_TAG = this.getClass().getSimpleName();
     public static final String LANGUAGE_FROM_DIALOG_SELECTED = "languageSelectFromDialog";
     public static final String ID_TEXTVIEW_CALL = "idTextViewCall";
 
     private String[] languages;
-    private String languageSelect;
-    private String languageSelectFromDialog;
     private int idTextViewCall;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        languages = getArguments().getStringArray("language");
-//        Log.d(LOG_TAG, "languages = " + languages.length);
-        languageSelect = getArguments().getString("languageSelect");
-        idTextViewCall = getArguments().getInt("idTextView");
-        int intLanguageSelect = -1;
+        languages = getArguments().getStringArray(KEY_BUNDLE_FOR_DIALOG_LANGUAGE);
+        String languageSelect = getArguments().getString(KEY_BUNDLE_FOR_DIALOG_LANGUAGE_SELECT);
+        idTextViewCall = getArguments().getInt(KEY_BUNDLE_FOR_DIALOG_ID_TEXT_VIEW);
+        int intLanguageSelect = -1; /*-1 значит никакой язык не выбран*/
 
         try {
             Arrays.sort(languages);
@@ -49,8 +48,7 @@ public class DialogLanguageSelect extends DialogFragment {
     DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            languageSelectFromDialog = languages[which];
-            Log.d(LOG_TAG, "languageSelectFromDialog = " + languageSelectFromDialog);
+            String languageSelectFromDialog = languages[which];
             Intent intent = new Intent();
             intent.putExtra(LANGUAGE_FROM_DIALOG_SELECTED, languageSelectFromDialog);
             intent.putExtra(ID_TEXTVIEW_CALL, idTextViewCall);
