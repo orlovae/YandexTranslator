@@ -60,6 +60,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
     private final int PART_OF_SPEECH = 100;
     private final int TRANSLATE = 200;
+    private final int MEAN = 300;
 
     private TextView textViewTranslate;
     private TextView textViewLanguageText, textViewRevers, textViewLanguageTranslation;
@@ -271,17 +272,53 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                                 Log.d(LOG_TAG, "trList.size = " + trList.size());
 
                                 int countTrList = 0;
+                                int endTrList = trList.size();
                                 for (Tr itemTr : trList
                                         ) {
-                                    itemTr.getPos();
-                                    Log.d(LOG_TAG, "Tr Pos = " + itemTr.getPos());
+//                                    itemTr.getPos();/*какая часть речи, с данном случае не нужна,
+//                                      так как идёт дублирование*/
+//                                    Log.d(LOG_TAG, "Tr Pos = " + itemTr.getPos());
 
-                                    itemTr.getText();
                                     Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
 
-                                    countTrList++;
+                                    String massiveSyn = itemTr.getText();
 
-                                    addTextView(TRANSLATE, countTrList, itemTr.getText());
+                                    List<Syn> synList = itemTr.getSyn();
+                                    if (synList != null) {
+                                        Log.d(LOG_TAG, "synList.size = " + synList.size());
+
+                                        for (Syn itemSyn : synList
+                                                ) {
+                                            massiveSyn = massiveSyn + ", " + itemSyn.getText();
+                                            Log.d(LOG_TAG, "syn Text = " + itemSyn.getText());
+                                        }
+                                    } else {
+                                        Log.d(LOG_TAG, "synList is null " + (synList == null));
+                                    }
+                                    countTrList++;
+                                    addTextView(TRANSLATE, countTrList, massiveSyn);
+
+                                    String massiveMean = "(";
+
+                                    List<Mean> meanList = itemTr.getMean();
+                                    if (meanList != null) {
+                                        Log.d(LOG_TAG, "meanList.size = " + meanList.size());
+
+                                        for (int countMean = 0; countMean < meanList.size();
+                                             countMean++) {
+                                            if (countMean == meanList.size() - 1) {
+                                                massiveMean = massiveMean + meanList.get(countMean)
+                                                        .getText() + ")";
+                                            } else {
+                                                massiveMean = massiveMean + meanList.get(countMean)
+                                                        .getText() + ", ";
+                                            }
+                                        }
+                                        addTextView(MEAN, 0, massiveMean);
+
+                                    } else {
+                                        Log.d(LOG_TAG, "meanList is null " + (meanList == null));
+                                    }
 
                                     List<Ex> exList = itemTr.getEx();
                                     if (exList != null) {
@@ -310,35 +347,6 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                                     } else {
                                         Log.d(LOG_TAG, "exList it null " + (exList == null));
                                     }
-
-                                    List<Mean> meanList = itemTr.getMean();
-                                    if (meanList != null) {
-                                        Log.d(LOG_TAG, "meanList.size = " + meanList.size());
-
-                                        for (Mean itemMean : meanList
-                                                ) {
-                                            itemMean.getText();
-                                            Log.d(LOG_TAG, "mean Text = " + itemMean.getText());
-                                        }
-
-                                    } else {
-                                        Log.d(LOG_TAG, "meanList is null " + (meanList == null));
-                                    }
-
-                                    List<Syn> synList = itemTr.getSyn();
-                                    if (synList != null) {
-                                        Log.d(LOG_TAG, "synList.size = " + synList.size());
-
-                                        for (Syn itemSyn : synList
-                                                ) {
-                                            itemSyn.getText();
-                                            Log.d(LOG_TAG, "syn Text = " + itemSyn.getText());
-                                        }
-
-                                    } else {
-                                        Log.d(LOG_TAG, "synList is null " + (synList == null));
-                                    }
-
                                 }
                             }
                         } else {
@@ -430,6 +438,24 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 tvTranslate.setText(text);
                 linearLayoutTranslate.addView(tvTranslate);
                 linearLayout.addView(linearLayoutTranslate);
+                break;
+            case MEAN:
+                Log.d(LOG_TAG, "Start addTextView|MEAN");
+
+                TextView tvMean = new TextView(getActivity());
+                tvMean.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+
+                if (Build.VERSION.SDK_INT < 23) {
+                    tvMean.setTextAppearance(getActivity(), R.style.Mean);
+                } else {
+                    tvMean.setTextAppearance(R.style.Mean);
+                }
+
+                tvMean.setText(text);
+
+                linearLayout.addView(tvMean);
                 break;
 
         }
