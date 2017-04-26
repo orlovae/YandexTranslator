@@ -11,6 +11,7 @@
     <string name="un_select_favorites">&#9825;</string>
     <string name="loop_search">&#128269;</string>
     <string name="tire">&#8212;</string>
+    <string name="transcription">&#91;%s&#93;</string>
 
     
     <!-- Части речи -->

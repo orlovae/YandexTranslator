@@ -260,17 +260,25 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                         if (defList.size() != 0) {
 
+                            int countDef = 0;
+
                             for (Def item : defList
                                     ) {
                                 item.getText();
                                 Log.d(LOG_TAG, "Text = " + item.getText());
                                 addTextView(KEY_API_DICTIONARY_TEXT, 0, item.getText());
                                 
-                                String ts = getActivity().getString()
-                                            + item.getTs()
-                                            + getActivity().getString();//TODO сделать подстановку в стринг
+                                String ts = String.format(getActivity().getString(R.string.
+                                        transcription), item.getTs());
                                 Log.d(LOG_TAG, "Ts = " + item.getTs());
-                                addTextView(KEY_API_DICTIONARY_TS, 0, item.getTs());
+
+                                if (countDef <= 0) { /*нужна транскрипция, только 1 элемента, иначе
+                                транскрипция выводится для всех частей речи - сущ., гл., прилаг, и
+                                т.п.*/
+                                    addTextView(KEY_API_DICTIONARY_TS, 0, ts);
+                                }
+                                countDef++;
+
                                 
                                 item.getPos();
                                 Log.d(LOG_TAG, "Pos = " + item.getPos());
