@@ -24,6 +24,7 @@ import com.example.alex.yandextranslator.DialogLanguageSelect;
 import com.example.alex.yandextranslator.R;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
+import com.example.alex.yandextranslator.model.response.Translator;
 import com.example.alex.yandextranslator.model.response.dictionaryentry.Def;
 import com.example.alex.yandextranslator.model.response.dictionaryentry.DictionaryEntry;
 import com.example.alex.yandextranslator.model.response.dictionaryentry.Ex;
@@ -33,10 +34,15 @@ import com.example.alex.yandextranslator.model.response.dictionaryentry.Tr;
 import com.example.alex.yandextranslator.model.response.dictionaryentry.Tr_;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiDictionaryEntry;
+import com.example.alex.yandextranslator.rest.ApiTranslator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -110,7 +116,8 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 String[] codeLanguageToRequest  = getcodeLanguageToRequest();
                 app.setCodeLangToRequest(codeLanguageToRequest);
 
-                responseTranslator(app.createMapJson(textToYandex, "dictionaryEntry"));
+                responseTranslator(app.createMapJson(textToYandex, "translator"));
+                responseTranslatorDictionary(app.createMapJson(textToYandex, "dictionaryEntry"));
             }
 
             @Override
@@ -240,7 +247,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
         }
     }
 
-    public void responseTranslator(Map<String, String> mapJson) {
+    public void responseTranslatorDictionary(Map<String, String> mapJson) {
         Log.d(LOG_TAG, "Start responseTranslator");
 
         ApiDictionaryEntry apiDictionaryEntry = app.getApiDictionaryEntry();
@@ -264,10 +271,9 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                             for (Def item : defList
                                     ) {
-                                item.getText();
+
                                 Log.d(LOG_TAG, "Text = " + item.getText());
-                                addTextView(KEY_API_DICTIONARY_TEXT, 0, item.getText());
-                                
+
                                 String ts = String.format(getActivity().getString(R.string.
                                         transcription), item.getTs());
                                 Log.d(LOG_TAG, "Ts = " + item.getTs());
@@ -275,7 +281,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                                 if (countDef <= 0) { /*нужна транскрипция, только 1 элемента, иначе
                                 транскрипция выводится для всех частей речи - сущ., гл., прилаг, и
                                 т.п.*/
-                                    addTextView(KEY_API_DICTIONARY_TS, 0, ts);
+                                    addTextView(KEY_API_DICTIONARY_TS, 0, item.getText(), ts, null);
                                 }
                                 countDef++;
 
@@ -283,37 +289,46 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                                 item.getPos();
                                 Log.d(LOG_TAG, "Pos = " + item.getPos());
 
-                                addTextView(KEY_API_DICTIONARY_PART_OF_SPEECH, 0, item.getPos());
+                                addTextView(KEY_API_DICTIONARY_PART_OF_SPEECH, 0, item.getPos(),
+                                        null, null);
 
                                 List<Tr> trList = item.getTr();
                                 Log.d(LOG_TAG, "trList.size = " + trList.size());
 
                                 int countTrList = 0;
-                                int endTrList = trList.size();
                                 for (Tr itemTr : trList
                                         ) {
-//                                    itemTr.getPos();/*какая часть речи, с данном случае не нужна,
+//                                    itemTr.getPos();/*какая часть речи, в данном случае не нужна,
 //                                      так как идёт дублирование*/
 //                                    Log.d(LOG_TAG, "Tr Pos = " + itemTr.getPos());
 
                                     Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
 
-                                    String massiveSyn = itemTr.getText();
+                                    Log.d(LOG_TAG, "gen Text = " + itemTr.getGen());
+
+                                    TreeMap<String, String> synListTextAndGen = new TreeMap<>();
+
+                                    synListTextAndGen.put(itemTr.getText(), itemTr.getGen());
 
                                     List<Syn> synList = itemTr.getSyn();
+
+                                    countTrList++;
+
                                     if (synList != null) {
                                         Log.d(LOG_TAG, "synList.size = " + synList.size());
 
                                         for (Syn itemSyn : synList
                                                 ) {
-                                            massiveSyn = massiveSyn + ", " + itemSyn.getText();
-                                            Log.d(LOG_TAG, "syn Text = " + itemSyn.getText());
+                                            synListTextAndGen.put(itemSyn.getText(),
+                                                    itemSyn.getGen());
                                         }
+                                        addTextView(KEY_API_DICTIONARY_TRANSLATE, countTrList,
+                                                null, null, synListTextAndGen);
                                     } else {
                                         Log.d(LOG_TAG, "synList is null " + (synList == null));
+                                        addTextView(KEY_API_DICTIONARY_TRANSLATE, countTrList,
+                                                null, null, synListTextAndGen);
                                     }
-                                    countTrList++;
-                                    addTextView(KEY_API_DICTIONARY_TRANSLATE, countTrList, massiveSyn);
 
                                     String massiveMean = "(";
 
@@ -331,7 +346,8 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                                                         .getText() + ", ";
                                             }
                                         }
-                                        addTextView(KEY_API_DICTIONARY_MEAN, 0, massiveMean);
+                                        addTextView(KEY_API_DICTIONARY_MEAN, 0, massiveMean,
+                                                null, null);
 
                                     } else {
                                         Log.d(LOG_TAG, "meanList is null " + (meanList == null));
@@ -361,7 +377,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
                                                 ex = ex + tr_;
 
-                                                addTextView(KEY_API_DICTIONARY_EX, 0, ex);
+                                                addTextView(KEY_API_DICTIONARY_EX, 0, ex, null, null);
 
                                             } else {
                                                 Log.d(LOG_TAG, "tr_List is null " + (tr_List == null));
@@ -400,15 +416,37 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
         });
     }
 
-    private void addTextView(int key, int count, final String text){
+    private void addTextView(int key, int count, String text, String transcription,
+                             TreeMap<String, String> synListTextAndGen){
         Log.d(LOG_TAG, "Start addTextView");
         switch (key){
             case KEY_API_DICTIONARY_TS:
                 Log.d(LOG_TAG, "Start addTextView|TS");
 
+                LinearLayout linearLayoutText = new LinearLayout(getActivity());
+                linearLayoutText.setOrientation(LinearLayout.HORIZONTAL);
+                linearLayoutText.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+
+                TextView tvText = new TextView(getActivity());
+                tvText.setLayoutParams(new LayoutParams(
+                        LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT));
+
+                if (Build.VERSION.SDK_INT < 23) {
+                    tvText.setTextAppearance(getActivity(), R.style.Text);
+                } else {
+                    tvText.setTextAppearance(R.style.Text);
+                }
+
+                tvText.setText(text + " ");
+
+                linearLayoutText.addView(tvText);
+
                 TextView tvTs = new TextView(getActivity());
                 tvTs.setLayoutParams(new LayoutParams(
-                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT,
                         LayoutParams.WRAP_CONTENT));
 
                 if (Build.VERSION.SDK_INT < 23) {
@@ -417,8 +455,10 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                     tvTs.setTextAppearance(R.style.Ts);
                 }
 
-                tvTs.setText(text);
-                linearLayout.addView(tvTs);
+                tvTs.setText(transcription);
+
+                linearLayoutText.addView(tvTs);
+                linearLayout.addView(linearLayoutText);
                 break;
             case KEY_API_DICTIONARY_PART_OF_SPEECH:
                 Log.d(LOG_TAG, "Start addTextView|PART_OF_SPEECH");
@@ -447,6 +487,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
             case KEY_API_DICTIONARY_TRANSLATE:
                 Log.d(LOG_TAG, "Start addTextView|TRANSLATE");
+
                 LinearLayout linearLayoutTranslate = new LinearLayout(getActivity());
                 linearLayoutTranslate.setOrientation(LinearLayout.HORIZONTAL);
                 linearLayoutTranslate.setLayoutParams(new LayoutParams(
@@ -465,20 +506,69 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 }
                 tvCountTranslate.setText(count + "  "); /*два пробела нужны для формирования отступа
                 после цифры*/
+
                 linearLayoutTranslate.addView(tvCountTranslate);
 
-                TextView tvTranslate = new TextView(getActivity());
-                tvTranslate.setLayoutParams(new LayoutParams(
-                        LayoutParams.WRAP_CONTENT,
-                        LayoutParams.WRAP_CONTENT));
+                Iterator<Map.Entry<String,String>> iterator = synListTextAndGen.entrySet().iterator();
 
-                if (Build.VERSION.SDK_INT < 23) {
-                    tvTranslate.setTextAppearance(getActivity(), R.style.Translate);
-                } else {
-                    tvTranslate.setTextAppearance(R.style.Translate);
+                while (iterator.hasNext()) {
+                    Map.Entry<String, String> entry = iterator.next();
+
+                    TextView tvTranslate = new TextView(getActivity());
+                    tvTranslate.setLayoutParams(new LayoutParams(
+                            LayoutParams.WRAP_CONTENT,
+                            LayoutParams.WRAP_CONTENT));
+
+                    if (Build.VERSION.SDK_INT < 23) {
+                        tvTranslate.setTextAppearance(getActivity(), R.style.Translate);
+                    } else {
+                        tvTranslate.setTextAppearance(R.style.Translate);
+                    }
+                    tvTranslate.setText(entry.getKey());
+
+                    TextView tvGen = new TextView(getActivity());
+                    tvTranslate.setLayoutParams(new LayoutParams(
+                            LayoutParams.WRAP_CONTENT,
+                            LayoutParams.WRAP_CONTENT));
+
+                    if (Build.VERSION.SDK_INT < 23) {
+                        tvGen.setTextAppearance(getActivity(), R.style.Gen);
+                    } else {
+                        tvGen.setTextAppearance(R.style.Gen);
+                    }
+
+                    if (entry.getValue() != null) {
+                        tvGen.setText(" " + entry.getValue());
+                    } else {
+                        tvGen.setVisibility(View.INVISIBLE);
+                    }
+
+                    TextView tvComma = new TextView(getActivity());
+                    tvComma.setLayoutParams(new LayoutParams(
+                            LayoutParams.WRAP_CONTENT,
+                            LayoutParams.WRAP_CONTENT));
+
+                    if (Build.VERSION.SDK_INT < 23) {
+                        tvComma.setTextAppearance(getActivity(), R.style.Translate);
+                    } else {
+                        tvComma.setTextAppearance(R.style.Translate);
+                    }
+
+                    String comma = getActivity().getString(R.string.comma) + " ";
+
+                    tvComma.setText(comma);
+
+                    if (iterator.hasNext()) {
+                        linearLayoutTranslate.addView(tvTranslate);
+                        linearLayoutTranslate.addView(tvGen);
+                        linearLayoutTranslate.addView(tvComma);
+
+                    } else {
+                        linearLayoutTranslate.addView(tvTranslate);
+                        linearLayoutTranslate.addView(tvGen);
+                    }
                 }
-                tvTranslate.setText(text);
-                linearLayoutTranslate.addView(tvTranslate);
+
                 linearLayout.addView(linearLayoutTranslate);
                 break;
             case KEY_API_DICTIONARY_MEAN:
@@ -527,42 +617,42 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
 
     }
 
-//    public void responseTranslator(Map<String, String> mapJson) {
-//        Log.d(LOG_TAG, "Start responseTranslator");
-//
-//        ApiTranslator apiTranslator = app.getApiTranslator();
-//
-//        Call<Translator> call = apiTranslator.translate(mapJson);
-//
-//        call.enqueue(new Callback<Translator>() {
-//            @Override
-//            public void onResponse(Call<Translator> call, Response<Translator> response) {
-//                try {
-//                    String responseTranslator;
-//                    if (response.isSuccessful()){
-//                        responseTranslator = response.body().getText().toString();
-//                        String textTranslator = mapJson.get("text");
-//                        String translationDirection = mapJson.get("lang");
+    public void responseTranslator(Map<String, String> mapJson) {
+        Log.d(LOG_TAG, "Start responseTranslator");
+
+        ApiTranslator apiTranslator = app.getApiTranslator();
+
+        Call<Translator> call = apiTranslator.translate(mapJson);
+
+        call.enqueue(new Callback<Translator>() {
+            @Override
+            public void onResponse(Call<Translator> call, Response<Translator> response) {
+                try {
+                    String responseTranslator;
+                    if (response.isSuccessful()){
+                        responseTranslator = response.body().getText().toString();
+                        String textTranslator = mapJson.get("text");
+                        String translationDirection = mapJson.get("lang");
 //                        app.addToHistoryFavoritesTable(textTranslator, responseTranslator,
 //                                translationDirection, 0);
-//                    } else {
-//                        responseTranslator = getString(R.string.error_invalid_responce);
-//                    }
-//                    textViewTranslate.setText(responseTranslator);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    Log.d(LOG_TAG, "exeption onResponce " + e.toString());
-//                    //TODO написать обработку ошибок
-//                }
-//            }
-//            @Override
-//            public void onFailure(Call<Translator> call, Throwable t) {
-//                t.printStackTrace();
-//                Log.d(LOG_TAG, "exeption onFailure " + t.toString());
-//                //TODO написать обработку ошибок
-//            }
-//        });
-//    }
+                    } else {
+                        responseTranslator = getString(R.string.error_invalid_responce);
+                    }
+                    textViewTranslate.setText(responseTranslator);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(LOG_TAG, "exeption onResponce " + e.toString());
+                    //TODO написать обработку ошибок
+                }
+            }
+            @Override
+            public void onFailure(Call<Translator> call, Throwable t) {
+                t.printStackTrace();
+                Log.d(LOG_TAG, "exeption onFailure " + t.toString());
+                //TODO написать обработку ошибок
+            }
+        });
+    }
 
     private String[] getcodeLanguageToRequest(){
         Log.d(LOG_TAG, "Start getcodeLanguageToRequest");
