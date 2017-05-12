@@ -31,7 +31,7 @@ public final class Contract {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_LANGUAGE);
 
         // Типы данных
-        // набор строк //TODO пересмотреть урок, уточнить что это за хрень
+        // набор строк //
         public static final String TYPE_LANGUAGE_ALL_ROW =
                 ContentResolver.CURSOR_DIR_BASE_TYPE +
                         "/" + AUTHORITY + "/" + TABLE_NAME;
@@ -63,6 +63,67 @@ public final class Contract {
         public static final String TYPE_HISTORY_FAVORITES_SINGLE_ROW =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE +
                         "/" + AUTHORITY + "/" + TABLE_NAME;
+    }
+
+    public static final class DictionaryEntries implements BaseColumns {
+        /** Table DictionaryEntries **/
+        public static final String TABLE_NAME_DE = "DictionaryEntries";
+        public static final String COLUMN_DE_ID = BaseColumns._ID;
+        public static final String COLUMN_DE_TEXT = "text";
+        public static final String COLUMN_DE_PART_OF_SPEECH = "part_of_speech";
+        public static final String COLUMN_DE_TRANSCRIPTION = "transcription";
+        public static final String COLUMN_DE_TRANSLATE_ID = "translate_id";
+
+        public static final Uri CONTENT_URI_DE = Uri.withAppendedPath(BASE_CONTENT_URI,
+                TABLE_NAME_DE);
+
+        /** Table Translate**/
+        public static final String TABLE_NAME_TRANSLATE = "Translate";
+        public static final String COLUMN_TRANSLATE_ID = BaseColumns._ID;
+        public static final String COLUMN_TRANSLATE_TEXT = "translate_text";
+        public static final String COLUMN_TRANSLATE_PART_OF_SPEECH = "translate_part_of_speech";
+        public static final String COLUMN_TRANSLATE_GENDER = "translate_gender";
+        public static final String COLUMN_TRANSLATE_SYNONYM_ID = "synonym_id";
+        public static final String COLUMN_TRANSLATE_MEANING_ID = "meaning_id";
+        public static final String COLUMN_TRANSLATE_EXAMPLE_ID = "example_id";
+
+        public static final Uri CONTENT_URI_TRANSLATE = Uri.withAppendedPath(BASE_CONTENT_URI,
+                TABLE_NAME_TRANSLATE);
+
+        /**Table Synonym**/
+        public static final String TABLE_NAME_SYNONYM = "Synonym";
+        public static final String COLUMN_SYNONYM_ID = BaseColumns._ID;
+        public static final String COLUMN_SYNONYM_TEXT = "synonym_text";
+        public static final String COLUMN_SYNONYM_PART_OF_SPEECH = "synonym_part_of_speech";
+        public static final String COLUMN_SYNONYM_GENDER = "synonym_gender";
+
+        public static final Uri CONTENT_URI_SYNONYM = Uri.withAppendedPath(BASE_CONTENT_URI,
+                TABLE_NAME_SYNONYM);
+
+        /**Table Meaning**/
+        public static final String TABLE_NAME_MEANING = "Meaning";
+        public static final String COLUMN_MEANING = BaseColumns._ID;
+        public static final String COLUMN_MEANING_TEXT = "meaning_text";
+
+        public static final Uri CONTENT_URI_MEANING = Uri.withAppendedPath(BASE_CONTENT_URI,
+                TABLE_NAME_MEANING);
+
+        /**Table Example**/
+        public static final String TABLE_NAME_EXAMPLE = "Example";
+        public static final String COLUMN_EXAMPLE_ID = BaseColumns._ID;
+        public static final String COLUMN_EXAMPLE_TEXT = "example_text";
+        public static final String COLUMN_EXAMPLE_EXAMPLE_TRANSLATION_ID = "example_translation_id";
+
+        public static final Uri CONTENT_URI_EXAMPLE = Uri.withAppendedPath(BASE_CONTENT_URI,
+                TABLE_NAME_EXAMPLE);
+
+        /**Table ExampleTranslation**/
+        public static final String TABLE_NAME_EXAMPLE_TRANSLATION = "ExampleTranslation";
+        public static final String COLUMN_EXAMPLE_TRANSLATION_ID = BaseColumns._ID;
+        public static final String COLUMN_EXAMPLE_TRANSLATION_TEXT = "example_translation_text";
+
+        public static final Uri CONTENT_URI_EXAMPLE_TRANSLATION = Uri.withAppendedPath(
+                BASE_CONTENT_URI, TABLE_NAME_EXAMPLE_TRANSLATION);
     }
 
 }

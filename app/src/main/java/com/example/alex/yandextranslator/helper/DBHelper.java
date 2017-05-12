@@ -25,6 +25,17 @@ public class DBHelper extends SQLiteOpenHelper {
             + Contract.HistoryFavorites.COLUMN_TRANSLATED_TEXT + " text,"
             + Contract.HistoryFavorites.COLUMN_TRANSLATION_DIRECTION + " text,"
             + Contract.HistoryFavorites.COLUMN_FAVORITE + " integer);";
+    private final String SQL_CREATE_DE_TABLE = "CREATE TABLE "
+            + Contract.DictionaryEntries.TABLE_NAME_DE + " ("
+            + Contract.DictionaryEntries.COLUMN_DE_ID + " integer primary key autoincrement,"
+            + Contract.DictionaryEntries.COLUMN_DE_TEXT + " text,"
+            + Contract.DictionaryEntries.COLUMN_DE_PART_OF_SPEECH + " text"
+            + Contract.DictionaryEntries.COLUMN_DE_TRANSCRIPTION + " text"
+            + Contract.DictionaryEntries.COLUMN_DE_TRANSLATE_ID + " integer, FOREIGN KEY("
+            + Contract.DictionaryEntries.COLUMN_DE_TRANSLATE_ID + ") REFERENCES "
+            + Contract.DictionaryEntries.TABLE_NAME_DE + " ( "
+            + Contract.DictionaryEntries.COLUMN_DE_TRANSLATE_ID + " ));";
+    
 
     public DBHelper(Context context){
         super(context, DATABASE_NAME, null, TABLE_VERSION);
@@ -34,6 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(SQL_CREATE_LAGUAGE_TABLE);
         database.execSQL(SQL_CREATE_HISTORY_FAVORITES_TABLE);
+        database.execSQL(SQL_CREATE_DE_TABLE);
     }
 
     @Override
