@@ -392,11 +392,7 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                         } else {
                             // приходит пустой ответ без перевода.
                         }
-
-                        String textTranslator = mapJson.get("text");
-                        String translationDirection = mapJson.get("lang");
-//                        app.addToHistoryFavoritesTable(textTranslator, responseTranslator,
-//                                translationDirection, 0);
+                        app.addToDictionaryEntriesAllTable(defList, 0);
                     } else {
                         responseTranslator = getString(R.string.error_invalid_responce);
                     }

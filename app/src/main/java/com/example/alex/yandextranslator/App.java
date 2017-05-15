@@ -12,6 +12,12 @@ import com.example.alex.yandextranslator.model.HistoryFavorites;
 import com.example.alex.yandextranslator.model.language.Language;
 import com.example.alex.yandextranslator.model.response.LanguageDetection;
 import com.example.alex.yandextranslator.model.response.LanguageDictionare;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Def;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Ex;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Mean;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Syn;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Tr;
+import com.example.alex.yandextranslator.model.response.dictionaryentry.Tr_;
 import com.example.alex.yandextranslator.rest.ApiClient;
 import com.example.alex.yandextranslator.rest.ApiDictionare;
 import com.example.alex.yandextranslator.rest.ApiDictionaryEntry;
@@ -23,7 +29,9 @@ import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -303,5 +311,118 @@ public class App extends Application {
                 null, null, null, null);
 
         return cursorAdapter.getArrayListHistoryFavoritesToCursor(cursor);
+    }
+
+    public void addToDictionaryEntriesAllTable(List<Def> defList, int favorites){
+        Log.d(LOG_TAG, "Start addToDictionaryEntriesAllTable");
+
+        if (defList.size() != 0) {
+
+            for (Def item : defList
+                    ) {
+                Log.d(LOG_TAG, "Text = " + item.getText());
+                Log.d(LOG_TAG, "Pos = " + item.getPos());
+
+                ContentValues cvDE = new ContentValues();
+                cvDE.put(Contract.DictionaryEntries.COLUMN_DE_TEXT, item.getText());
+                cvDE.put(Contract.DictionaryEntries.COLUMN_DE_PART_OF_SPEECH, item.getPos());
+                cvDE.put(Contract.DictionaryEntries.COLUMN_DE_TRANSCRIPTION, item.getTs());
+                getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_DE, cvDE);
+
+                List<Tr> trList = item.getTr();
+                Log.d(LOG_TAG, "trList.size = " + trList.size());
+
+
+
+                for (Tr itemTr : trList
+                        ) {
+                    Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
+                    Log.d(LOG_TAG, "gen Text = " + itemTr.getGen());
+
+                    ContentValues cvTranslate = new ContentValues();
+                    cvTranslate.put(Contract.DictionaryEntries.COLUMN_TRANSLATE_TEXT, itemTr.getText());
+                    cvTranslate.put(Contract.DictionaryEntries.COLUMN_TRANSLATE_GENDER, itemTr.getGen());
+                    getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_TRANSLATE,
+                            cvTranslate);
+
+                    List<Syn> synList = itemTr.getSyn();
+
+                    if (synList != null) {
+                        Log.d(LOG_TAG, "synList.size = " + synList.size());
+
+                        for (Syn itemSyn : synList
+                                ) {
+
+                            ContentValues cvSynonym = new ContentValues();
+                            cvSynonym.put(Contract.DictionaryEntries.COLUMN_SYNONYM_TEXT, itemSyn.getText());
+                            cvSynonym.put(Contract.DictionaryEntries.COLUMN_SYNONYM_GENDER, itemSyn.getGen());
+                            getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_SYNONYM,
+                                    cvSynonym);
+                        }
+                    }
+
+                    List<Mean> meanList = itemTr.getMean();
+
+                    if (meanList != null) {
+                        Log.d(LOG_TAG, "meanList.size = " + meanList.size());
+
+                        for (Mean itemMean : meanList
+                                ) {
+                            ContentValues cvMean = new ContentValues();
+                            cvMean.put(Contract.DictionaryEntries.COLUMN_MEANING_TEXT, itemMean.getText());
+                            getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_MEANING,
+                                    cvMean);
+                        }
+
+                    } else {
+                        Log.d(LOG_TAG, "meanList is null " + (meanList == null));
+                    }
+
+                    List<Ex> exList = itemTr.getEx();
+                    if (exList != null) {
+                        Log.d(LOG_TAG, "exList.size = " + exList.size());
+
+                        for (Ex itemEx : exList
+                                ) {
+                            ContentValues cvExample = new ContentValues();
+                            cvExample.put(Contract.DictionaryEntries.COLUMN_EXAMPLE_TEXT, itemEx.getText());
+                            getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_EXAMPLE,
+                                    cvExample);
+
+                            Log.d(LOG_TAG, "Ex Text = " + itemEx.getText());
+
+                            List<Tr_> tr_List = itemEx.getTr();
+                            if (tr_List != null) {
+                                Log.d(LOG_TAG, "tr_List.size = " + tr_List.size());
+
+                                for (Tr_ itemTr_ : tr_List
+                                        ) {
+                                    ContentValues cvExampleTranslation = new ContentValues();
+                                    cvExampleTranslation.put(Contract.DictionaryEntries.COLUMN_EXAMPLE_TRANSLATION_TEXT,
+                                            itemTr_.getText());
+                                    getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_EXAMPLE_TRANSLATION,
+                                            cvExampleTranslation);
+                                    Log.d(LOG_TAG, "tr_ Text = " + itemTr_.getText());
+                                }
+
+                            } else {
+                                Log.d(LOG_TAG, "tr_List is null " + (tr_List == null));
+                            }
+                        }
+
+                    } else {
+                        Log.d(LOG_TAG, "exList it null " + (exList == null));
+                    }
+                }
+            }
+        }
+
+
+
+
+
+//        if (checkDuplicationInHistory(prepareResponseTranslator)){
+//            getContentResolver().insert(Contract.HistoryFavorites.CONTENT_URI, cv);
+//        }
     }
 }
