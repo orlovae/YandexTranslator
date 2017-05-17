@@ -73,6 +73,7 @@ public final class Contract {
         public static final String COLUMN_DE_TEXT = "text";
         public static final String COLUMN_DE_PART_OF_SPEECH = "part_of_speech";
         public static final String COLUMN_DE_TRANSCRIPTION = "transcription";
+        public static final String COLUMN_HISTORY_FAVORITES_ID = "history_favorites_id";
 
         public static final String PATH_DICTIONARY_ENTERIES_DE = TABLE_NAME_DE;
 

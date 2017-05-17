@@ -60,6 +60,8 @@ public class App extends Application {
 
     private CursorAdapter cursorAdapter;
 
+    private int rowIDHistoryFavorites = -1;
+
     private final String KEY_TRANSLATE = "trnsl.1.1.20170407T081255Z.343fc6903b3656af.58d14da04ebc826dbc32072d91d8e3034d99563f";
 
     private final String KEY_DICTIONARY_ENTRY = "dict.1.1.20170423T182533Z.177a26d2026f3eb9.392449125c6824447549afa55b9c5f97ebbf9899";
@@ -276,6 +278,7 @@ public class App extends Application {
     public void addToHistoryFavoritesTable(String textTranslator, String responseTranslator,
                                             String translationDirection, int favorites){
         Log.d(LOG_TAG, "Start getcodeLanguageToRequest");
+
         String prepareResponseTranslator = responseTranslator.substring(1,
                 responseTranslator.length()-1);
         ContentValues cv = new ContentValues();
@@ -285,7 +288,12 @@ public class App extends Application {
         cv.put(Contract.HistoryFavorites.COLUMN_FAVORITE, 0);
 
         if (checkDuplicationInHistory(prepareResponseTranslator)){
-            getContentResolver().insert(Contract.HistoryFavorites.CONTENT_URI, cv);
+            Uri uri = getContentResolver().insert(Contract.HistoryFavorites.CONTENT_URI, cv);
+            try {
+                rowIDHistoryFavorites = Integer.parseInt(uri.getLastPathSegment());
+            } catch (NullPointerException e) {
+                Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
+            }
         }
     }
 
@@ -314,7 +322,7 @@ public class App extends Application {
         return cursorAdapter.getArrayListHistoryFavoritesToCursor(cursor);
     }
 
-    public void addToDictionaryEntriesAllTable(List<Def> defList, int favorites){
+    public void addToDictionaryEntriesAllTable(List<Def> defList){
         Log.d(LOG_TAG, "Start addToDictionaryEntriesAllTable");
 
         int rowIDDE = -1;
@@ -334,6 +342,7 @@ public class App extends Application {
                 cv.put(Contract.DictionaryEntries.COLUMN_DE_TEXT, item.getText());
                 cv.put(Contract.DictionaryEntries.COLUMN_DE_PART_OF_SPEECH, item.getPos());
                 cv.put(Contract.DictionaryEntries.COLUMN_DE_TRANSCRIPTION, item.getTs());
+                cv.put(Contract.DictionaryEntries.COLUMN_HISTORY_FAVORITES_ID, rowIDHistoryFavorites);
 
                 Uri uriDE = getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_DE, cv);
 

@@ -35,7 +35,11 @@ public class DBHelper extends SQLiteOpenHelper {
             + Contract.DictionaryEntries.COLUMN_DE_ID + " integer primary key autoincrement,"
             + Contract.DictionaryEntries.COLUMN_DE_TEXT + " text,"
             + Contract.DictionaryEntries.COLUMN_DE_PART_OF_SPEECH + " text,"
-            + Contract.DictionaryEntries.COLUMN_DE_TRANSCRIPTION + " text);";
+            + Contract.DictionaryEntries.COLUMN_DE_TRANSCRIPTION + " text,"
+            + Contract.DictionaryEntries.COLUMN_HISTORY_FAVORITES_ID + " integer, FOREIGN KEY("
+            + Contract.DictionaryEntries.COLUMN_HISTORY_FAVORITES_ID + ") REFERENCES "
+            + Contract.HistoryFavorites.TABLE_NAME + " ( "
+            + Contract.HistoryFavorites.COLUMN_ID + " ));";
 
     private final String SQL_CREATE_TRANSLATE_TABLE = "CREATE TABLE "
             + Contract.DictionaryEntries.TABLE_NAME_TRANSLATE + " ("
