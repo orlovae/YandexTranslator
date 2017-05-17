@@ -73,7 +73,6 @@ public final class Contract {
         public static final String COLUMN_DE_TEXT = "text";
         public static final String COLUMN_DE_PART_OF_SPEECH = "part_of_speech";
         public static final String COLUMN_DE_TRANSCRIPTION = "transcription";
-        public static final String COLUMN_DE_TRANSLATE_ID = "translate_id";
 
         public static final String PATH_DICTIONARY_ENTERIES_DE = TABLE_NAME_DE;
 
@@ -94,9 +93,7 @@ public final class Contract {
         public static final String COLUMN_TRANSLATE_TEXT = "translate_text";
         public static final String COLUMN_TRANSLATE_PART_OF_SPEECH = "translate_part_of_speech";
         public static final String COLUMN_TRANSLATE_GENDER = "translate_gender";
-        public static final String COLUMN_TRANSLATE_SYNONYM_ID = "synonym_id";
-        public static final String COLUMN_TRANSLATE_MEANING_ID = "meaning_id";
-        public static final String COLUMN_TRANSLATE_EXAMPLE_ID = "example_id";
+        public static final String COLUMN_TRANSLATE_DE_ID = "DE_id";
 
         public static final String PATH_DICTIONARY_ENTERIES_TRANSLATE = TABLE_NAME_TRANSLATE;
 
@@ -117,6 +114,7 @@ public final class Contract {
         public static final String COLUMN_SYNONYM_TEXT = "synonym_text";
         public static final String COLUMN_SYNONYM_PART_OF_SPEECH = "synonym_part_of_speech";
         public static final String COLUMN_SYNONYM_GENDER = "synonym_gender";
+        public static final String COLUMN_SYNONYM_TRANSLATE_ID = "translate_id";
 
         public static final String PATH_DICTIONARY_ENTERIES_SYNONYM = TABLE_NAME_SYNONYM;
 
@@ -135,6 +133,7 @@ public final class Contract {
         public static final String TABLE_NAME_MEANING = "Meaning";
         public static final String COLUMN_MEANING_ID = BaseColumns._ID;
         public static final String COLUMN_MEANING_TEXT = "meaning_text";
+        public static final String COLUMN_MEANING_TRANSLATE_ID = "translate_id";
 
         public static final String PATH_DICTIONARY_ENTERIES_MEANING = TABLE_NAME_MEANING;
 
@@ -153,7 +152,7 @@ public final class Contract {
         public static final String TABLE_NAME_EXAMPLE = "Example";
         public static final String COLUMN_EXAMPLE_ID = BaseColumns._ID;
         public static final String COLUMN_EXAMPLE_TEXT = "example_text";
-        public static final String COLUMN_EXAMPLE_EXAMPLE_TRANSLATION_ID = "example_translation_id";
+        public static final String COLUMN_EXAMPLE_TRANSLATE_ID = "translate_id";
 
         public static final String PATH_DICTIONARY_ENTERIES_EXAMPLE = TABLE_NAME_EXAMPLE;
 
@@ -172,6 +171,7 @@ public final class Contract {
         public static final String TABLE_NAME_EXAMPLE_TRANSLATION = "ExampleTranslation";
         public static final String COLUMN_EXAMPLE_TRANSLATION_ID = BaseColumns._ID;
         public static final String COLUMN_EXAMPLE_TRANSLATION_TEXT = "example_translation_text";
+        public static final String COLUMN_EXAMPLE_TRANSLATE_EXAMPLE_ID = "example_id";
 
         public static final String PATH_DICTIONARY_ENTERIES_EXAMPLE_TRANSLATION = TABLE_NAME_EXAMPLE_TRANSLATION;
 

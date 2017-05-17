@@ -3,6 +3,7 @@ package com.example.alex.yandextranslator;
 import android.app.Application;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.alex.yandextranslator.adapter.CursorAdapter;
@@ -316,6 +317,12 @@ public class App extends Application {
     public void addToDictionaryEntriesAllTable(List<Def> defList, int favorites){
         Log.d(LOG_TAG, "Start addToDictionaryEntriesAllTable");
 
+        int rowIDDE = -1;
+        int rowIDTranslate = -1;
+        int rowIDExample = -1;
+
+        ContentValues cv = new ContentValues();
+
         if (defList.size() != 0) {
 
             for (Def item : defList
@@ -323,11 +330,19 @@ public class App extends Application {
                 Log.d(LOG_TAG, "Text = " + item.getText());
                 Log.d(LOG_TAG, "Pos = " + item.getPos());
 
-                ContentValues cvDE = new ContentValues();
-                cvDE.put(Contract.DictionaryEntries.COLUMN_DE_TEXT, item.getText());
-                cvDE.put(Contract.DictionaryEntries.COLUMN_DE_PART_OF_SPEECH, item.getPos());
-                cvDE.put(Contract.DictionaryEntries.COLUMN_DE_TRANSCRIPTION, item.getTs());
-                getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_DE, cvDE);
+                cv.clear();
+                cv.put(Contract.DictionaryEntries.COLUMN_DE_TEXT, item.getText());
+                cv.put(Contract.DictionaryEntries.COLUMN_DE_PART_OF_SPEECH, item.getPos());
+                cv.put(Contract.DictionaryEntries.COLUMN_DE_TRANSCRIPTION, item.getTs());
+
+                Uri uriDE = getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_DE, cv);
+
+                try {
+                    rowIDDE = Integer.parseInt(uriDE.getLastPathSegment());
+                } catch (NullPointerException e) {
+                    Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
+                }
+
 
                 List<Tr> trList = item.getTr();
                 Log.d(LOG_TAG, "trList.size = " + trList.size());
@@ -339,11 +354,18 @@ public class App extends Application {
                     Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
                     Log.d(LOG_TAG, "gen Text = " + itemTr.getGen());
 
-                    ContentValues cvTranslate = new ContentValues();
-                    cvTranslate.put(Contract.DictionaryEntries.COLUMN_TRANSLATE_TEXT, itemTr.getText());
-                    cvTranslate.put(Contract.DictionaryEntries.COLUMN_TRANSLATE_GENDER, itemTr.getGen());
-                    getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_TRANSLATE,
-                            cvTranslate);
+                    cv.clear();
+                    cv.put(Contract.DictionaryEntries.COLUMN_TRANSLATE_TEXT, itemTr.getText());
+                    cv.put(Contract.DictionaryEntries.COLUMN_TRANSLATE_GENDER, itemTr.getGen());
+                    cv.put(Contract.DictionaryEntries.COLUMN_TRANSLATE_DE_ID, rowIDDE);
+                    Uri uriTranslate = getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_TRANSLATE,
+                            cv);
+
+                    try {
+                        rowIDTranslate = Integer.parseInt(uriTranslate.getLastPathSegment());
+                    } catch (NullPointerException e) {
+                        Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
+                    }
 
                     List<Syn> synList = itemTr.getSyn();
 
@@ -353,11 +375,12 @@ public class App extends Application {
                         for (Syn itemSyn : synList
                                 ) {
 
-                            ContentValues cvSynonym = new ContentValues();
-                            cvSynonym.put(Contract.DictionaryEntries.COLUMN_SYNONYM_TEXT, itemSyn.getText());
-                            cvSynonym.put(Contract.DictionaryEntries.COLUMN_SYNONYM_GENDER, itemSyn.getGen());
+                            cv.clear();
+                            cv.put(Contract.DictionaryEntries.COLUMN_SYNONYM_TEXT, itemSyn.getText());
+                            cv.put(Contract.DictionaryEntries.COLUMN_SYNONYM_GENDER, itemSyn.getGen());
+                            cv.put(Contract.DictionaryEntries.COLUMN_SYNONYM_TRANSLATE_ID, rowIDTranslate);
                             getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_SYNONYM,
-                                    cvSynonym);
+                                    cv);
                         }
                     }
 
@@ -368,10 +391,11 @@ public class App extends Application {
 
                         for (Mean itemMean : meanList
                                 ) {
-                            ContentValues cvMean = new ContentValues();
-                            cvMean.put(Contract.DictionaryEntries.COLUMN_MEANING_TEXT, itemMean.getText());
+                            cv.clear();
+                            cv.put(Contract.DictionaryEntries.COLUMN_MEANING_TEXT, itemMean.getText());
+                            cv.put(Contract.DictionaryEntries.COLUMN_MEANING_TRANSLATE_ID, rowIDTranslate);
                             getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_MEANING,
-                                    cvMean);
+                                    cv);
                         }
 
                     } else {
@@ -384,10 +408,17 @@ public class App extends Application {
 
                         for (Ex itemEx : exList
                                 ) {
-                            ContentValues cvExample = new ContentValues();
-                            cvExample.put(Contract.DictionaryEntries.COLUMN_EXAMPLE_TEXT, itemEx.getText());
-                            getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_EXAMPLE,
-                                    cvExample);
+                            cv.clear();
+                            cv.put(Contract.DictionaryEntries.COLUMN_EXAMPLE_TEXT, itemEx.getText());
+                            cv.put(Contract.DictionaryEntries.COLUMN_EXAMPLE_TRANSLATE_ID, rowIDTranslate);
+                            Uri uriExample = getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_EXAMPLE,
+                                    cv);
+
+                            try {
+                                rowIDExample = Integer.parseInt(uriExample.getLastPathSegment());
+                            } catch (NullPointerException e) {
+                                Log.e(LOG_TAG, "NullPointerException: " + e.getLocalizedMessage());
+                            }
 
                             Log.d(LOG_TAG, "Ex Text = " + itemEx.getText());
 
@@ -397,11 +428,12 @@ public class App extends Application {
 
                                 for (Tr_ itemTr_ : tr_List
                                         ) {
-                                    ContentValues cvExampleTranslation = new ContentValues();
-                                    cvExampleTranslation.put(Contract.DictionaryEntries.COLUMN_EXAMPLE_TRANSLATION_TEXT,
+                                    cv.clear();
+                                    cv.put(Contract.DictionaryEntries.COLUMN_EXAMPLE_TRANSLATION_TEXT,
                                             itemTr_.getText());
+                                    cv.put(Contract.DictionaryEntries.COLUMN_EXAMPLE_TRANSLATE_EXAMPLE_ID, rowIDExample);
                                     getContentResolver().insert(Contract.DictionaryEntries.CONTENT_URI_EXAMPLE_TRANSLATION,
-                                            cvExampleTranslation);
+                                            cv);
                                     Log.d(LOG_TAG, "tr_ Text = " + itemTr_.getText());
                                 }
 
