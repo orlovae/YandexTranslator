@@ -260,138 +260,138 @@ public class TabFragmentTranslator extends Fragment implements View.OnClickListe
                 try {
                     String responseTranslator;
                     if (response.isSuccessful()){
-                        responseTranslator = response.body().toString();
-
+//                        responseTranslator = response.body().toString();
+//
                         List<Def> defList = response.body().getDef();
-                        Log.d(LOG_TAG, "def.size = " + defList.size());
-
-                        if (defList.size() != 0) {
-
-                            int countDef = 0;
-
-                            for (Def item : defList
-                                    ) {
-
-                                Log.d(LOG_TAG, "Text = " + item.getText());
-
-                                String ts = String.format(getActivity().getString(R.string.
-                                        transcription), item.getTs());
-                                Log.d(LOG_TAG, "Ts = " + item.getTs());
-
-                                if (countDef <= 0) { /*нужна транскрипция, только 1 элемента, иначе
-                                транскрипция выводится для всех частей речи - сущ., гл., прилаг, и
-                                т.п.*/
-                                    addTextView(KEY_API_DICTIONARY_TS, 0, item.getText(), ts, null);
-                                }
-                                countDef++;
-
-                                
-                                item.getPos();
-                                Log.d(LOG_TAG, "Pos = " + item.getPos());
-
-                                addTextView(KEY_API_DICTIONARY_PART_OF_SPEECH, 0, item.getPos(),
-                                        null, null);
-
-                                List<Tr> trList = item.getTr();
-                                Log.d(LOG_TAG, "trList.size = " + trList.size());
-
-                                int countTrList = 0;
-                                for (Tr itemTr : trList
-                                        ) {
-//                                    itemTr.getPos();/*какая часть речи, в данном случае не нужна,
-//                                      так как идёт дублирование*/
-//                                    Log.d(LOG_TAG, "Tr Pos = " + itemTr.getPos());
-
-                                    Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
-
-                                    Log.d(LOG_TAG, "gen Text = " + itemTr.getGen());
-
-                                    TreeMap<String, String> synListTextAndGen = new TreeMap<>();
-
-                                    synListTextAndGen.put(itemTr.getText(), itemTr.getGen());
-
-                                    List<Syn> synList = itemTr.getSyn();
-
-                                    countTrList++;
-
-                                    if (synList != null) {
-                                        Log.d(LOG_TAG, "synList.size = " + synList.size());
-
-                                        for (Syn itemSyn : synList
-                                                ) {
-                                            synListTextAndGen.put(itemSyn.getText(),
-                                                    itemSyn.getGen());
-                                        }
-                                        addTextView(KEY_API_DICTIONARY_TRANSLATE, countTrList,
-                                                null, null, synListTextAndGen);
-                                    } else {
-                                        Log.d(LOG_TAG, "synList is null " + (synList == null));
-                                        addTextView(KEY_API_DICTIONARY_TRANSLATE, countTrList,
-                                                null, null, synListTextAndGen);
-                                    }
-
-                                    String massiveMean = "(";
-
-                                    List<Mean> meanList = itemTr.getMean();
-                                    if (meanList != null) {
-                                        Log.d(LOG_TAG, "meanList.size = " + meanList.size());
-
-                                        for (int countMean = 0; countMean < meanList.size();
-                                             countMean++) {
-                                            if (countMean == meanList.size() - 1) {
-                                                massiveMean = massiveMean + meanList.get(countMean)
-                                                        .getText() + ")";
-                                            } else {
-                                                massiveMean = massiveMean + meanList.get(countMean)
-                                                        .getText() + ", ";
-                                            }
-                                        }
-                                        addTextView(KEY_API_DICTIONARY_MEAN, 0, massiveMean,
-                                                null, null);
-
-                                    } else {
-                                        Log.d(LOG_TAG, "meanList is null " + (meanList == null));
-                                    }
-
-                                    List<Ex> exList = itemTr.getEx();
-                                    if (exList != null) {
-                                        Log.d(LOG_TAG, "exList.size = " + exList.size());
-
-                                        for (Ex itemEx : exList
-                                                ) {
-                                            String ex = itemEx.getText() + " " +
-                                                    getActivity().getString(R.string.tire) + " ";
-                                            Log.d(LOG_TAG, "Ex Text = " + itemEx.getText());
-
-                                            List<Tr_> tr_List = itemEx.getTr();
-                                            if (tr_List != null) {
-                                                Log.d(LOG_TAG, "tr_List.size = " + tr_List.size());
-
-                                                String tr_ = "";
-
-                                                for (Tr_ itemTr_ : tr_List
-                                                        ) {
-                                                    tr_ = tr_ + itemTr_.getText();
-                                                    Log.d(LOG_TAG, "tr_ Text = " + itemTr_.getText());
-                                                }
-
-                                                ex = ex + tr_;
-
-                                                addTextView(KEY_API_DICTIONARY_EX, 0, ex, null, null);
-
-                                            } else {
-                                                Log.d(LOG_TAG, "tr_List is null " + (tr_List == null));
-                                            }
-                                        }
-
-                                    } else {
-                                        Log.d(LOG_TAG, "exList it null " + (exList == null));
-                                    }
-                                }
-                            }
-                        } else {
-                            // приходит пустой ответ без перевода.
-                        }
+//                        Log.d(LOG_TAG, "def.size = " + defList.size());
+//
+//                        if (defList.size() != 0) {
+//
+//                            int countDef = 0;
+//
+//                            for (Def item : defList
+//                                    ) {
+//
+//                                Log.d(LOG_TAG, "Text = " + item.getText());
+//
+//                                String ts = String.format(getActivity().getString(R.string.
+//                                        transcription), item.getTs());
+//                                Log.d(LOG_TAG, "Ts = " + item.getTs());
+//
+//                                if (countDef <= 0) { /*нужна транскрипция, только 1 элемента, иначе
+//                                транскрипция выводится для всех частей речи - сущ., гл., прилаг, и
+//                                т.п.*/
+//                                    addTextView(KEY_API_DICTIONARY_TS, 0, item.getText(), ts, null);
+//                                }
+//                                countDef++;
+//
+//
+//                                item.getPos();
+//                                Log.d(LOG_TAG, "Pos = " + item.getPos());
+//
+//                                addTextView(KEY_API_DICTIONARY_PART_OF_SPEECH, 0, item.getPos(),
+//                                        null, null);
+//
+//                                List<Tr> trList = item.getTr();
+//                                Log.d(LOG_TAG, "trList.size = " + trList.size());
+//
+//                                int countTrList = 0;
+//                                for (Tr itemTr : trList
+//                                        ) {
+////                                    itemTr.getPos();/*какая часть речи, в данном случае не нужна,
+////                                      так как идёт дублирование*/
+////                                    Log.d(LOG_TAG, "Tr Pos = " + itemTr.getPos());
+//
+//                                    Log.d(LOG_TAG, "Tr Text = " + itemTr.getText());
+//
+//                                    Log.d(LOG_TAG, "gen Text = " + itemTr.getGen());
+//
+//                                    TreeMap<String, String> synListTextAndGen = new TreeMap<>();
+//
+//                                    synListTextAndGen.put(itemTr.getText(), itemTr.getGen());
+//
+//                                    List<Syn> synList = itemTr.getSyn();
+//
+//                                    countTrList++;
+//
+//                                    if (synList != null) {
+//                                        Log.d(LOG_TAG, "synList.size = " + synList.size());
+//
+//                                        for (Syn itemSyn : synList
+//                                                ) {
+//                                            synListTextAndGen.put(itemSyn.getText(),
+//                                                    itemSyn.getGen());
+//                                        }
+//                                        addTextView(KEY_API_DICTIONARY_TRANSLATE, countTrList,
+//                                                null, null, synListTextAndGen);
+//                                    } else {
+//                                        Log.d(LOG_TAG, "synList is null " + (synList == null));
+//                                        addTextView(KEY_API_DICTIONARY_TRANSLATE, countTrList,
+//                                                null, null, synListTextAndGen);
+//                                    }
+//
+//                                    String massiveMean = "(";
+//
+//                                    List<Mean> meanList = itemTr.getMean();
+//                                    if (meanList != null) {
+//                                        Log.d(LOG_TAG, "meanList.size = " + meanList.size());
+//
+//                                        for (int countMean = 0; countMean < meanList.size();
+//                                             countMean++) {
+//                                            if (countMean == meanList.size() - 1) {
+//                                                massiveMean = massiveMean + meanList.get(countMean)
+//                                                        .getText() + ")";
+//                                            } else {
+//                                                massiveMean = massiveMean + meanList.get(countMean)
+//                                                        .getText() + ", ";
+//                                            }
+//                                        }
+//                                        addTextView(KEY_API_DICTIONARY_MEAN, 0, massiveMean,
+//                                                null, null);
+//
+//                                    } else {
+//                                        Log.d(LOG_TAG, "meanList is null " + (meanList == null));
+//                                    }
+//
+//                                    List<Ex> exList = itemTr.getEx();
+//                                    if (exList != null) {
+//                                        Log.d(LOG_TAG, "exList.size = " + exList.size());
+//
+//                                        for (Ex itemEx : exList
+//                                                ) {
+//                                            String ex = itemEx.getText() + " " +
+//                                                    getActivity().getString(R.string.tire) + " ";
+//                                            Log.d(LOG_TAG, "Ex Text = " + itemEx.getText());
+//
+//                                            List<Tr_> tr_List = itemEx.getTr();
+//                                            if (tr_List != null) {
+//                                                Log.d(LOG_TAG, "tr_List.size = " + tr_List.size());
+//
+//                                                String tr_ = "";
+//
+//                                                for (Tr_ itemTr_ : tr_List
+//                                                        ) {
+//                                                    tr_ = tr_ + itemTr_.getText();
+//                                                    Log.d(LOG_TAG, "tr_ Text = " + itemTr_.getText());
+//                                                }
+//
+//                                                ex = ex + tr_;
+//
+//                                                addTextView(KEY_API_DICTIONARY_EX, 0, ex, null, null);
+//
+//                                            } else {
+//                                                Log.d(LOG_TAG, "tr_List is null " + (tr_List == null));
+//                                            }
+//                                        }
+//
+//                                    } else {
+//                                        Log.d(LOG_TAG, "exList it null " + (exList == null));
+//                                    }
+//                                }
+//                            }
+//                        } else {
+//                            // приходит пустой ответ без перевода.
+//                        }
                         app.addToDictionaryEntriesAllTable(defList);
                     } else {
                         responseTranslator = getString(R.string.error_invalid_responce);
